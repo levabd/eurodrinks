@@ -1,4 +1,4 @@
 # October CMS - eurodrinks
 
-- Plugin - Admin configuration   
-- Theme - Web site
+- Plugin - Backend Admin configurations   
+- Theme - Frontend Web site
