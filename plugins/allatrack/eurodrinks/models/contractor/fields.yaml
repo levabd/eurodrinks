@@ -1,0 +1,137 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    id:
+        label: ID
+        disabled: true
+        hidden: true
+
+    addresses:
+        span: right
+        type: relation
+        nameFrom: name_en
+        label: allatrack.eurodrinks::lang.contractor.address
+        cssClass: col-sm-3
+        commentHtml: true
+        comment: allatrack.eurodrinks::lang.contractor.add_address
+
+    name_en:
+        label: allatrack.eurodrinks::lang.name_en
+        cssClass: col-sm-3
+        span: left
+
+    name_uk:
+        label: allatrack.eurodrinks::lang.name_uk
+        cssClass: col-sm-3
+        span: left
+
+    name_ru:
+        label: allatrack.eurodrinks::lang.name_ru
+        cssClass: col-sm-3
+        span: left
+        required: true
+
+    brands:
+        span: right
+        type: relation
+        nameFrom: import_name
+        label: allatrack.eurodrinks::lang.brand.one
+        cssClass: col-sm-3
+        commentHtml: true
+        comment: allatrack.eurodrinks::lang.contractor.add_brand
+
+    import_name:
+        label: allatrack.eurodrinks::lang.contractor.imported_name
+        cssClass: col-sm-3
+        span: left
+        comment: allatrack.eurodrinks::lang.contractor.imported_name_input_comment
+
+    slug:
+        label: allatrack.eurodrinks::lang.slug
+        required: true
+        cssClass: col-sm-3
+        span: left
+        preset: name_ru
+
+    edrpoy:
+        type: number
+        span: left
+        cssClass: col-sm-3
+        label: allatrack.eurodrinks::lang.contractor.edrpoy
+        attributes:
+            maxlength: 8
+
+    is_group:
+        context: [create, update]
+        type: checkbox
+        cssClass: col-sm-3
+        span: left
+        label: allatrack.eurodrinks::lang.contractor.is_group
+        default: false
+
+    contractor_id:
+        type: dropdown
+        cssClass: col-sm-3
+        span: left
+        label: allatrack.eurodrinks::lang.contractor.group
+        emptyOption: allatrack.eurodrinks::lang.contractor.select_group
+        trigger:
+            action: show
+            field: is_group
+            condition: checked
+
+#    addresses:
+#        type: relation
+#        span: left
+#        nameFrom: name_en
+#        label: Address
+#    _has_address:
+#        context: [create, update]
+#        type: checkbox
+#        span: left
+#        label: allatrack.eurodrinks::lang.contractor.has_address
+#        default: false
+
+#    _address:
+#        type: dropdown
+#        span: left
+#        label: allatrack.eurodrinks::lang.contractor.address
+#        emptyOption: allatrack.eurodrinks::lang.contractor.select_address
+#        trigger:
+#            action: show
+#            field: _has_address
+#            condition: checked
+#
+#    _new_address:
+#        context: [create, update]
+#        type: checkbox
+#        span: left
+#        label: allatrack.eurodrinks::lang.contractor.new_address
+#
+#
+#    _name_en:
+#        span: left
+#        label: Name (en)
+#        trigger:
+#            action: show
+#            field: _new_address
+#            condition: checked
+#
+#    _map:
+#        type: partial
+#        path: $/allatrack/eurodrinks/models/contractor/_map.htm
+#        span: left
+#        trigger:
+#            action: show
+#            field: _new_address
+#            condition: checked
+#
+#    _latitude:
+#        type: partial
+#        path: $/allatrack/eurodrinks/models/contractor/_hidden_latitude.htm
+#
+#    _longitude:
+#        type: partial
+#        path: $/allatrack/eurodrinks/models/contractor/_hidden_longitude.htm

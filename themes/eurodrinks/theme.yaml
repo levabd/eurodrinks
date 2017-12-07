@@ -1,0 +1,9 @@
+name: eurodrinks
+description: 'Eurodrinks website'
+author: 'Allatrack'
+homepage: 'eurodrinks.ua'
+code: ''
+require:
+    - Allatrack.Eurodrinks
+    - Indikator.News
+    - RainLab.Translate

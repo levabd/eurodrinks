@@ -1,0 +1,27 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    id:
+        label: ID
+        searchable: true
+
+    contractors:
+        label: Contractors
+        relation: contractors
+        select: import_name
+        searchable: true
+
+    name_uk:
+        label: Name (uk)
+        searchable: true
+    name_en:
+        label: Name (en)
+        searchable: true
+
+    coordinates:
+        label: Coordinates
+        select: CONCAT(latitude, ' - ', longitude)
+
+

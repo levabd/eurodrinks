@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Address
+
+# Model Form Field configuration
+form: $/allatrack/eurodrinks/models/address/fields.yaml
+
+# Model Class name
+modelClass: Allatrack\Eurodrinks\Models\Address
+
+# Default redirect location
+defaultRedirect: allatrack/eurodrinks/addresses
+
+# Create page
+create:
+    title: Create Address
+    redirect: allatrack/eurodrinks/addresses/update/:id
+    redirectClose: allatrack/eurodrinks/addresses
+
+# Update page
+update:
+    title: Edit Address
+    redirect: allatrack/eurodrinks/addresses
+    redirectClose: allatrack/eurodrinks/addresses
+
+# Preview page
+preview:
+    title: Preview Address

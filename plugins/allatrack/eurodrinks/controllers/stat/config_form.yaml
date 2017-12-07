@@ -1,0 +1,27 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Brand
+
+# Model Form Field configuration
+form:
+    fields:
+        stat_file:
+            label: allatrack.eurodrinks::lang.brand.stat_upload_file
+            type: fileupload
+            mode: file
+            fileTypes: xls,xlsx
+
+# Model Class name
+#modelClass: Allatrack\Eurodrinks\Models\Brand
+
+# Default redirect location
+defaultRedirect: allatrack/eurodrinks/stat-upload
+
+# Upload page
+create:
+    title: allatrack.eurodrinks::lang.brand.stat_upload
+    redirect: allatrack/eurodrinks/stat-upload
+    redirectClose: allatrack/eurodrinks/stat-upload

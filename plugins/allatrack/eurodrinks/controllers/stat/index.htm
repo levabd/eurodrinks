@@ -1,0 +1,92 @@
+<div class="container">
+    <h2><?= trans('allatrack.eurodrinks::lang.brand.title_per_brand', ['brandName'=> $brandName ]) ?></h2>
+
+    <?= $this->widget->errorsWidget->render() ?>
+
+    <?php if (!isset($errors)): ?>
+
+    <?php if (isset($statisticsPerBrand)):?>
+    <!-- DISPLAY STATISTICS START -->
+    <ul class="nav nav-tabs">
+        <li><a data-toggle="tab" href="#<?= $previousYear ?>"><?= $previousYear ?></a></li>
+        <li class="active"><a data-toggle="tab" href="#<?= $currentYear ?>"><?= $currentYear ?></a></li>
+        <li><a data-toggle="tab" href="#<?= $percentageDifferenceKey ?>"><?= $percentageDifferenceTitle ?></a></li>
+    </ul>
+    <div class="tab-content container-tab">
+    <?php foreach ($statisticsPerBrand as $contentKey => $statistics): ?>
+        <div id="<?= $contentKey ?>" class="tab-pane fade <?php if ($contentKey== $currentYear) echo 'active'; ?>">
+            <table class="table" style="font-size: 12px;">
+                <thead>
+                <tr>
+                    <th width="250"><?= trans('allatrack.eurodrinks::lang.brand.product') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.january') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.february') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.march') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.april') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.may') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.june') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.july') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.august') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.september') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.october') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.november') ?></th>
+                    <th><?= trans('allatrack.eurodrinks::lang.december') ?></th>
+                    <?php if ($contentKey=='percentage_difference'):?>
+                     <th><?= trans('allatrack.eurodrinks::lang.total_p') ?></th>
+                     <!--<th><?= trans('allatrack.eurodrinks::lang.total_g_l') ?></th>-->
+                    <?php else: ?>
+                     <th><?= trans('allatrack.eurodrinks::lang.total_l') ?></th>
+                     <th><?= trans('allatrack.eurodrinks::lang.total_g_l') ?></th>
+                    <?php endif; ?>
+
+                </tr>
+                </thead>
+                <tbody >
+
+                    <?php  foreach($statistics as $product_name => $product_data):  ?>
+
+                    <?php if ($contentKey=='percentage_difference'&& $product_name!='total' || $contentKey!='percentage_difference'):?>
+                        <tr>
+                           <?php $fontWeight = $product_name=='total' ? '800' : '200'; ?>
+
+                            <td style="font-weight: <?= $fontWeight ?>"><?= $product_name=='total' ? trans('allatrack.eurodrinks::lang.total_l') : $product_name ?></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][0])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][0]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][1])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][1]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][2])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][2]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][3])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][3]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][4])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][4]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][5])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][5]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][6])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][6]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][7])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][7]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][8])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][8]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][9])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][9]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][10])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][10]) ?></div></td>
+                            <td style="text-align:right; font-weight: <?= $fontWeight ?>"><div class="<?= $this->getDirectionClass($contentKey, $product_data['months'][11])?>"></div><div class="figure"><?= $this->getRawValue($product_data['months'][11]) ?></div></td>
+
+                            <?php if ($contentKey=='percentage_difference'):?>
+                             <td style="text-align:right; font-weight: 800"><div class="<?= $this->getDirectionClass($contentKey, $product_data['total'])?>"></div><div class="figure"><?= $this->getRawValue($product_data['total']) ?></div></td>
+                            <?php else: ?>
+                             <td style="text-align:right; font-weight: 800"><?= $this->getRawValue($product_data['total']) ?></td>
+                             <td style="text-align:right; font-weight: 800"><?= $this->getRawValue($product_data['total_g_l']) ?></td>
+                            <?php endif; ?>
+
+                        </tr>
+                    <?php endif; ?>
+
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+    </div>
+
+    <?php  endforeach;
+    endif;?>
+
+    </div>
+
+    <?php endif; ?>
+
+    <!-- DISPLAY STATISTICS END -->
+
+</div>
+

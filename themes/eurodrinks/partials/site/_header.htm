@@ -1,0 +1,116 @@
+[viewBag]
+
+[localePicker]
+forceUrl = 0
+==
+<nav class="navbar navbar-toggleable-md transparent-container">
+
+    <div class="container not-transparent hidden-md-down">
+        <a class="navbar-brand" href="/">
+            <span class="1"></span>
+            <div class="icon-logo"></div>
+        </a>
+
+        <div class="collapse navbar-collapse .navbar-inner">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if this.page.id == 'home' %} active {% endif %}"
+                       href="/">{{'Main'|_}}<span class="sr-only">({{'Main'|_}})</span></a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link {% if this.page.id == 'brands' %} active {% endif %}"
+                       href="/brands">{{'Products'|_}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if (this.page.id == 'news-index') or (this.page.id == 'news-article') %} active {% endif %}"
+                       href="/news">{{'News'|_}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if this.page.id == 'contact' %} active {% endif %}"
+                       href="/contacts">{{'Contacts'|_}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link lang {% if currentLocale == 'uk' %} active {% else %} {% endif %}"
+                       href="#"
+                       data-request="onSwitchLocale"
+                       data-request-data="locale:'uk'"
+                    >{{'Ukr'|_}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if currentLocale == 'ru'%} active {% else %} {% endif %}"
+                       href="#"
+                       data-request="onSwitchLocale"
+                       data-request-data="locale:'ru'"
+                    >{{'Rus'|_}}</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item navbar-right">
+                    <a class="nav-link " href="/backend" style="padding-right: 0 !important;">{{'Enter for partners'|_}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="hidden-lg-up">
+        <button class="navbar-toggler navbar-toggler-right"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbar"
+                aria-controls="navbar"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon">{{'Main'|_}}</span>
+        </button>
+        <a class="navbar-brand" href="/"
+           data-toggle="collapse"
+           data-target="#navbar"
+           aria-controls="navbar"
+           aria-expanded="false"
+           aria-label="Toggle navigation">
+            <span class="1"></span>
+            <div class="icon-logo">
+        </a>
+
+        <div class="collapse navbar-collapse navbar-inner text-uppercase" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item " style="margin-top: 25px;">
+                    <a class="nav-link  {% if this.page.id == 'home' %} active {% endif %}"
+                       href="/">{{'Main'|_}}<span class="sr-only">({{'Main'|_ }})</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link  {% if this.page.id == 'brands' %} active {% endif %}"
+                       href="/brands">{{'Products'|_ }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link  {% if (this.page.id == 'news') or (this.page.id == 'news-article') %} active {% endif %}"
+                       href="/news">{{'News'|_ }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if this.page.id == 'contact' %} active {% endif %}"
+                       href="/contacts">{{'Contacts'|_ }}</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link lang-collapsed {% if currentLocale== 'uk'%}active {% else %}{% endif %}"
+                       href="#"
+                       data-request="onSwitchLocale"
+                       data-request-data="locale:'uk'"
+                    >{{'Ukr'|_}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link lang-collapsed {% if currentLocale== 'ru'%}active {% else %} {% endif %}"
+                       href="#"
+                       data-request="onSwitchLocale"
+                       data-request-data="locale:'ru'"
+                    >{{'Rus'|_}}</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item navbar-right">
+                    <a class="nav-link " href="/backend">{{'Enter for partners'|_}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

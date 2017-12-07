@@ -1,0 +1,96 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+tabs:
+    defaultTab: allatrack.eurodrinks::lang.product.info
+    fields:
+        id:
+            label: ID
+            hidden: true
+            disabled: true
+
+        name_en:
+            label: allatrack.eurodrinks::lang.product.name_en
+            type: text
+            span: left
+            size: tiny
+            required: true
+            attributes:
+                maxlength: 254
+
+        brand_id:
+            context: [create, update]
+            type: dropdown
+            span: right
+            label: allatrack.eurodrinks::lang.brand.one
+            emptyOption: backend::lang.user.select_brand
+
+        capacity:
+            label: allatrack.eurodrinks::lang.product.capacity
+            type: number
+            span: right
+            attributes:
+                maxlength: 10
+
+        name_uk:
+            label: allatrack.eurodrinks::lang.product.name_uk
+            span: left
+            type: text
+            size: tiny
+            attributes:
+                maxlength: 254
+
+        name_ru:
+            label: allatrack.eurodrinks::lang.product.name_ru
+            type: text
+            size: tiny
+            span: left
+            attributes:
+                maxlength: 254
+
+
+        description_en:
+            label: allatrack.eurodrinks::lang.product.description_en
+            type: textarea
+            size: small
+            span: left
+
+        description_uk:
+            label: allatrack.eurodrinks::lang.product.description_uk
+            type: textarea
+            size: small
+            span: left
+
+        description_ru:
+            label: allatrack.eurodrinks::lang.product.description_ru
+            type: textarea
+            size: small
+            span: left
+
+        contractors:
+            span: left
+            type: relation
+            nameFrom: import_name
+            label: allatrack.eurodrinks::lang.brand.contractor
+            commentHtml: true
+            comment:  allatrack.eurodrinks::lang.brand.add_contractor
+
+secondaryTabs:
+    fields:
+        image:
+            label: allatrack.eurodrinks::lang.product.image
+            type: fileupload
+            mode: exact
+            span: left
+            imageHeight: 260
+            imageWidth: 260
+            mimeTypes: jpg,jpeg,png
+            thumbOptions:
+                mode: crop
+                offset:
+                    - 0
+                    - 0
+                quality: 90
+                sharpen: 0
+                interlace: false
+                extension: auto

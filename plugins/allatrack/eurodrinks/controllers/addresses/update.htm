@@ -1,0 +1,66 @@
+<?php Block::put('breadcrumb') ?>
+    <ul>
+        <li><a href="<?= Backend::url('allatrack/eurodrinks/addresses') ?>">
+            <?= e(trans('allatrack.eurodrinks::lang.address.title')) ?>
+        </a></li>
+        <li><?= e($this->pageTitle) ?></li>
+    </ul>
+<?php Block::endPut() ?>
+
+<?php if (!$this->fatalError): ?>
+
+    <?= Form::open(['class' => 'layout']) ?>
+<div class="layout-row">
+    <div class="padded-container layout">
+        <div class="layout-row">
+        <div class="layout-row">
+            <?= $this->formRender() ?>
+        </div>
+
+        <div class="form-buttons">
+            <div class="loading-indicator-container">
+                <button
+                    type="submit"
+                    data-request="onSave"
+                    data-request-data="redirect:0"
+                    data-hotkey="ctrl+s, cmd+s"
+                    data-load-indicator="Saving Address..."
+                    class="btn btn-primary">
+                    <?=trans('allatrack.eurodrinks::lang.save') ?>
+                </button>
+                <button
+                    type="button"
+                    data-request="onSave"
+                    data-request-data="close:1"
+                    data-hotkey="ctrl+enter, cmd+enter"
+                    data-load-indicator="Saving Address..."
+                    class="btn btn-default">
+                    <?=trans('allatrack.eurodrinks::lang.save_and_close') ?>
+                </button>
+                <button
+                    type="button"
+                    class="oc-icon-trash-o btn-icon danger pull-right"
+                    data-request="onDelete"
+                    data-load-indicator="Deleting Address..."
+                    data-request-confirm="Delete this address?">
+                </button>
+                <span class="btn-text">
+                    <?=trans('allatrack.eurodrinks::lang.or') ?>
+                    <a href="<?= Backend::url('allatrack/eurodrinks/addresses') ?>">
+                        <?=trans('allatrack.eurodrinks::lang.cancel') ?>
+                </a>
+                </span>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <?= Form::close() ?>
+
+<?php else: ?>
+
+    <p class="flash-message static error"><?= e($this->fatalError) ?></p>
+    <p><a href="<?= Backend::url('allatrack/eurodrinks/addresses') ?>" class="btn btn-default">
+        <?=trans('allatrack.eurodrinks::lang.return_to_list') ?></a></p>
+
+<?php endif ?>

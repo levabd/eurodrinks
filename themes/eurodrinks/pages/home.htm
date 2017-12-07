@@ -1,0 +1,121 @@
+title = "Eurodrinks"
+url = "/"
+layout = "home"
+description = "Home page"
+is_hidden = 0
+
+[localePicker]
+forceUrl = 0
+==
+<?php
+use Allatrack\Eurodrinks\Models\Brand;
+use Allatrack\Eurodrinks\Models\Product;
+use Indikator\News\Models\Posts;
+
+function onStart()
+{
+    // $this['brands'] =  Brand::has('products.contractors.addresses')->with(['image', 'products.image', 'products.contractors.addresses'])->get()->toJson();
+
+$this['brands'] =  Brand::has('products')->with(['image', 'products.image'])->get()->toJson();
+$this['post'] = Posts::orderBy('created_at')->first();
+
+//$this['products']= Product::has('contractors.addresses')->with(['image', 'contractors.addresses', 'brand.image'])->get()->toArray();
+//dd(Brand::has('products.contractors.addresses')->with(['image', 'products.image', 'products.contractors.addresses'])->get()->toArray());
+}
+?>
+==
+
+{% put styles %}
+    <link href="{{ 'assets/vendor/vue2-animate.min.css'|theme }}" rel="stylesheet">
+{% endput %}
+
+<div class="container transparent-container vue-app-container" id="vue-app">
+
+    <!--Де знайти мій улюблений напій?-->
+    <h1 class="text-center">{{'Where can I find my favorite drink?'|_}}</h1>
+
+    <div v-for="(brands, index) in brandChunk()">
+        <div class="row margin-10">
+            <div class="col-lg-3 col-md-6 text-center brand-box"
+                 :id="'brand-box-row-'+index"
+                 :class="{'selected': selectedBrand[brand.id], 'unselected': !selectedBrand[brand.id] }"
+                 v-for="brand in brands"
+                 :key="'brand-id-'+brand.id"
+            >
+                <img :src="brand.image.path"
+                     :alt="brand.import_name"
+                     :id="'brand-box-' + brand.id"
+                     @click="showBrandProducts(brand.id, index)"
+                >
+            </div>
+        </div>
+
+        <div class="row" :id="'product-row-'+index">
+                <transition-group name="zoom" v-on:after-leave="afterLeave" tag="div" mode="out-in">
+                    <div class="col"
+                         :id="'brand-product-box-'+brand.id"
+                         v-for="brand in brands"
+                         :key="'brand-products-'+brand.id"
+                         v-show="selectedBrand[brand.id]"
+                    >
+                        <img v-for="product in brand.products"
+                             :id="'product-image-'+product.id"
+                             :src="product.image.path"
+                             :alt="product.name"
+                             :key="product.id">
+                    </div>
+                </transition-group>
+        </div>
+    </div>
+
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 delimiter"></div>
+    </div>
+</div>
+
+<div class="home-news-block">
+    <div class="container">
+        <div class="row">
+            <!-- ptserif caption -->
+            <div class="col-12 text-center">
+                <!--Останні новини-->
+                <h1 style="font-family: PtSerifCaption;">{{'Latest news'|_}}</h1>
+            </div>
+
+            {% partial "news/_preview" post=post %}
+
+            <div class="col-12">
+                <div class="row justify-content-center">
+                    <div class="col-lg-3 col-sm-3 col-md-3">
+                        <a href="/news" class="news-see-all text-center">{{'All news'|_}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% put scripts %}
+    <script type="application/javascript">
+      try {
+        window.brands = JSON.parse({{brands | json_encode | raw}});
+      }catch(e){
+        console.error(e);
+      }
+    </script>
+
+    <!-- Scripts -->
+    <script src="{{ [
+                    'assets/vendor/jquery.js',
+                    'assets/vendor/tether/js/tether.js',
+                    'assets/vendor/bootstrap4/js/bootstrap.js',
+                    'assets/vendor/vue.js',
+                    'assets/js/pages/home.js'
+                    ]|theme  }}"></script>
+{% endput %}
+

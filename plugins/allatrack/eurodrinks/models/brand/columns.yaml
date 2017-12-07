@@ -1,0 +1,36 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    id:
+        label: ID
+        searchable: true
+
+    contractors:
+        label: allatrack.eurodrinks::lang.brand.contractor
+        relation: contractors
+        select: import_name
+        searchable: true
+
+    import_name:
+        label: allatrack.eurodrinks::lang.import_name
+        searchable: yes
+        sortable: yes
+
+    name_ru:
+        label: allatrack.eurodrinks::lang.name_ru
+        searchable: yes
+        sortable: yes
+
+    name_uk:
+        label: allatrack.eurodrinks::lang.name_uk
+        searchable: yes
+        sortable: yes
+
+    name_en:
+        label: allatrack.eurodrinks::lang.name_en
+        searchable: yes
+        sortable: yes
+
+

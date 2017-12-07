@@ -1,0 +1,6 @@
+<div class="form-group is-required">
+    <label for="map">Выберите адрес </label>
+    <div id="map" style="width: 100%;height: 400px;"></div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=<?= config('allatrack.eurodrinks::google_map_api_key')?>&callback=initMap" async defer></script>

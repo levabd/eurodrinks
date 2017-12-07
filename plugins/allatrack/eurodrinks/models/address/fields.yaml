@@ -1,0 +1,47 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    id:
+        label: ID
+        span: left
+        hidden: true
+        disabled: true
+
+    contractors:
+        span: right
+        required: true
+        type: relation
+        nameFrom: import_name
+        label: Contractors
+        cssClass: col-sm-3
+
+    name_ru:
+        span: left
+        label: Name (ru)
+        cssClass: col-sm-3
+
+    name_uk:
+        span: left
+        label: Name (uk)
+        cssClass: col-sm-3
+
+    name_en:
+        span: left
+        label: Name (en)
+        cssClass: col-sm-3
+
+    _map:
+        type: partial
+        span: left
+        path: $/allatrack/eurodrinks/models/address/_map.htm
+        cssClass: col-sm-3
+
+    latitude:
+        type: partial
+        path: $/allatrack/eurodrinks/models/address/_hidden_latitude.htm
+
+    longitude:
+        type: partial
+        path: $/allatrack/eurodrinks/models/address/_hidden_longitude.htm

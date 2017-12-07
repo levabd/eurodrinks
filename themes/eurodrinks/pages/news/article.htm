@@ -1,0 +1,81 @@
+title = "Article"
+url = "/news/article/:slug"
+layout = "default"
+is_hidden = 0
+
+[viewBag]
+localeUrl[ru] = "/news/article/:slug"
+localeUrl[uk] = "/news/article/:slug"
+
+[newsPost newsArticle]
+slug = "{{ :slug }}"
+==
+<?php
+
+use Indikator\News\Models\Posts;
+
+function onStart()
+{
+    $this['currentYear'] = date('Y');
+    $this->addCss("/themes/eurodrinks/assets/vendor/slick/slick/slick.css", "core");
+    $this->addCss("/themes/eurodrinks/assets/vendor/slick/slick/slick-theme.css", "core");
+    $this->addJs("/themes/eurodrinks/assets/vendor/slick/slick/slick.min.js", "core");
+    $this->addJs("/themes/eurodrinks/assets/js/pages/posts/SmartInformerCreator.js", "core");
+    $this->addJs("/themes/eurodrinks/assets/js/pages/posts/article.js", "core");
+}
+
+function onLoadArticleData()
+{
+$articleIds = array_map(function($val){
+return intval ($val);
+}, request('article_ids', []));
+
+$post = new Posts;
+
+$post = $post->whereNotIn('id', $articleIds);
+
+$post = $post->isPublished();
+
+if ($post->count() == 0)
+{
+return 'no_articles';
+}
+
+$this['isAjax'] = request()->ajax();
+$this['post'] = $post->first();
+
+return $this['post'] !== null ? [
+'article_id'       => $this['post']->id,
+'article_rendered' => $this->renderPartial('news/_article')
+] : 'no_articles';
+}
+
+==
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css"/>
+{% set post = newsArticle.post %}
+
+<div class="container article-detail">
+     {% partial "news/_article" post=newsArticle.post %}
+</div>
+
+<script>
+
+
+  try {
+
+    /**
+     * @type Array  loadedPostIds - list of loaded post slugs during infinite scroll
+     */
+    var loadedPostIds = ['{{post.id}}'];
+
+//    initImages()
+
+  }catch(e){
+    var loadedPostIds =[];
+
+    console.error(e);
+  }
+
+</script>
+

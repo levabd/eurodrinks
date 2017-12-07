@@ -1,0 +1,27 @@
+<div class="row">
+    {% if isAjax %}
+    <div class="col">
+        <div class="delimiter"></div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col">
+        <h1>{{ post.title }}</h1>
+        <span class="date">{{ post.published_at|handle_news_date }}</span>
+            {% if post.image %}<img src="{{ post.image|media }}" alt="{{ post.title }}">{% endif %}
+        <article id="article-{{post.id}}">
+            {% if (post.introductory) and (not post.content) %}
+            <div class="post-content">{{ post.introductory|raw }}</div>
+            {% elseif (post.introductory) and (post.content) %}
+                <div class="post-content">{{ post.content|raw }}</div>
+            {% elseif post.content %}
+                <div class="post-content">{{ post.content|raw }}</div>
+            {% endif %}
+
+
+            <div id="images-block-{{post.id}}"></div>
+        </article>
+    </div>
+</div>

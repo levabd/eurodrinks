@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Product
+
+# Model Form Field configuration
+form: $/allatrack/eurodrinks/models/product/fields.yaml
+
+# Model Class name
+modelClass: Allatrack\Eurodrinks\Models\Product
+
+# Default redirect location
+defaultRedirect: allatrack/eurodrinks/products
+
+# Create page
+create:
+    title: allatrack.eurodrinks::lang.product.add
+    redirect: allatrack/eurodrinks/products/update/:id
+    redirectClose: allatrack/eurodrinks/products
+
+# Update page
+update:
+    title: allatrack.eurodrinks::lang.product.edit
+    redirect: allatrack/eurodrinks/products
+    redirectClose: allatrack/eurodrinks/products
+
+# Preview page
+preview:
+    title: allatrack.eurodrinks::lang.product.view

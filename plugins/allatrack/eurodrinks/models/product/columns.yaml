@@ -1,0 +1,21 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    id:
+        label: ID
+        searchable: true
+    name_en:
+        label: allatrack.eurodrinks::lang.product.name_en
+        searchable: true
+    name_ru:
+        label: allatrack.eurodrinks::lang.product.name_ru
+        searchable: true
+    name_uk:
+        label: allatrack.eurodrinks::lang.product.name_uk
+        searchable: true
+    brand:
+        label: allatrack.eurodrinks::lang.brand.one
+        relation: brand
+        select: slug

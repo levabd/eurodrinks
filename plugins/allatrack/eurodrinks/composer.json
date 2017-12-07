@@ -1,0 +1,20 @@
+{
+    "name": "allatrack/eurodrinks",
+    "description": "Packages for the plugin",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Max Peshkov",
+            "email": "peshkov1.max@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "guzzlehttp/guzzle": "^6.2@dev",
+        "maatwebsite/excel": "2.1.x-dev",
+        "php-excel-reader/spreadsheet-reader": "dev-master",
+        "barryvdh/laravel-ide-helper": "^2.3@dev",
+        "doctrine/dbal": "2.5.x-dev"
+    }
+}

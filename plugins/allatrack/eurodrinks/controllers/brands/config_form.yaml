@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Brand
+
+# Model Form Field configuration
+form: $/allatrack/eurodrinks/models/brand/fields.yaml
+
+# Model Class name
+modelClass: Allatrack\Eurodrinks\Models\Brand
+
+# Default redirect location
+defaultRedirect: allatrack/eurodrinks/brands
+
+# Create page
+create:
+    title: allatrack.eurodrinks::lang.brand.new
+    redirect: allatrack/eurodrinks/brands/update/:id
+    redirectClose: allatrack/eurodrinks/brands
+
+# Update page
+update:
+    title: allatrack.eurodrinks::lang.brand.edit
+    redirect: allatrack/eurodrinks/brands
+    redirectClose: allatrack/eurodrinks/brands
+
+# Preview page
+preview:
+    title: Preview Brand

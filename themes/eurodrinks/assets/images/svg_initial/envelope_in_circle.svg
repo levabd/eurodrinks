@@ -1,0 +1,33 @@
+<svg width="26.000000000000004" height="26.000000000000004" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <style type="text/css">.st0{fill:#f6d4b0;}
+        .st1{fill:#d0bfa9;}</style>
+    <defs>
+        <symbol viewBox="0 0 31.797 31.797" height="31.797px" width="31.797px" y="0px" x="0px" id="svg_3" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+            <g>
+                <path d="m0,5.713l0,20.371l31.797,0l0,-20.371l-31.797,0zm29.201,1.379l-13.302,11.086l-13.304,-11.086l26.606,0zm-27.821,17.612l0,-16.829l14.519,12.098l14.518,-12.098l0,16.83l-29.037,-0.001l0,0z"/>
+            </g>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+            <g/>
+        </symbol>
+    </defs>
+    <g>
+        <title>Layer 1</title>
+        <path fill="black" id="svg_1" d="m13,1c6.6,0 12,5.4 12,12s-5.4,12 -12,12s-12,-5.4 -12,-12s5.4,-12 12,-12m0,-1c-7.2,0 -13,5.8 -13,13s5.8,13 13,13s13,-5.8 13,-13s-5.8,-13 -13,-13l0,0z" class="st0"/>
+        <g id="svg_5"/>
+        <use fill="#d0bfa9" x="8.2411" y="9.5534" transform="matrix(0.5029161353107258,0,0,0.5482108905156009,2.6319319873102978,0.7587237316564501) " xlink:href="#svg_3" id="svg_4"/>
+        <g id="svg_6"/>
+    </g>
+</svg>

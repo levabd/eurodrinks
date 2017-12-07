@@ -1,0 +1,90 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    id:
+        label: ID
+        hidden: true
+        disabled: true
+
+    contractors:
+        span: right
+        required: true
+        type: relation
+        nameFrom: import_name
+        label: allatrack.eurodrinks::lang.brand.contractor
+        cssClass: col-sm-3
+        commentHtml: true
+        comment:  allatrack.eurodrinks::lang.brand.add_contractor
+
+    slug:
+        label: allatrack.eurodrinks::lang.slug
+        comment: allatrack.eurodrinks::lang.brand.slug_comment
+        required: true
+        cssClass: col-sm-3
+        span: left
+
+    import_name:
+        label: allatrack.eurodrinks::lang.import_name
+        required: true
+        cssClass: col-sm-3
+        span: left
+
+    name_uk:
+        label: allatrack.eurodrinks::lang.name_uk
+        span: left
+        cssClass: col-sm-3
+
+    name_ru:
+        label: allatrack.eurodrinks::lang.name_ru
+        span: left
+        cssClass: col-sm-3
+
+    name_en:
+        label: allatrack.eurodrinks::lang.name_en
+        span: left
+        cssClass: col-sm-3
+
+    image:
+        label: allatrack.eurodrinks::lang.product.image
+        type: fileupload
+        mode: image
+        span: right
+        imageHeight: 260
+        imageWidth: 260
+        mimeTypes: jpg,jpeg,png
+        cssClass: col-sm-3
+        thumbOptions:
+            mode: crop
+            offset:
+                - 0
+                - 0
+            quality: 90
+            sharpen: 0
+            interlace: false
+            extension: auto
+
+    description_ru:
+        label: allatrack.eurodrinks::lang.description_ru
+        type: textarea
+        size: small
+        cssClass: col-sm-3
+        span: left
+
+    description_uk:
+        label: allatrack.eurodrinks::lang.description_uk
+        type: textarea
+        cssClass: col-sm-3
+        size: small
+        span: left
+
+    description_en:
+        size: small
+        type: textarea
+        cssClass: col-sm-3
+        span: left
+        label: allatrack.eurodrinks::lang.description_en
+
+
+

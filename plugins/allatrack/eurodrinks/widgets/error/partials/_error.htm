@@ -1,0 +1,16 @@
+<!-- DISPLAY ERRORS STaRT -->
+<?php if (isset($errors)): ?>
+    <div data-control="flash-message" data-interval="10" class="error">
+        <span style="float: left;"> <?= trans('allatrack.eurodrinks::lang.error_occurs') ?> </span> <br>
+        <?php $l = count($errors); $index=0; ?>
+        <?php foreach ($errors as $error): ?>
+        <?php $height = $this->getBlockHeight($error); ?>
+            <div style="height: <?= $height-5?>px;">
+                <div style="float:left; width: 10px; height: <?= $height-5?>px;"> - </div>
+                <div style="float:left; text-align: left;"><?= $error ?></div> <?php if ($index+1!=$l): ?> <?php $index++; endif; ?>
+            </div>
+
+        <?php  endforeach; ?>
+</div>
+<?php endif; ?>
+<!-- DISPLAY ERRORS END -->

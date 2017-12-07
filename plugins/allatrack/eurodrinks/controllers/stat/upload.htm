@@ -1,0 +1,64 @@
+
+<?php Block::put('breadcrumb') ?>
+    <ul>
+        <li>
+            <a href="<?= Backend::url('allatrack/eurodrinks/brands') ?>">
+                <?= trans('allatrack.eurodrinks::lang.brand.title') ?>
+            </a>
+        </li>
+        <li><?= e($this->pageTitle) ?></li>
+    </ul>
+<?php Block::endPut() ?>
+
+<div class="callout fade in callout-info">
+    <div class="content">
+        <p><?= e( trans('allatrack.eurodrinks::lang.brand.how_to_load') ) ?></p>
+        <ul>
+            <li><?= trans('allatrack.eurodrinks::lang.brand.select_file', ['link'=> url('backend/allatrack/eurodrinks/stat/download?fileName='.'app/media/brands_statistics/nomenclatures/nomenclature.xls')])  ?></li>
+            <li><?= trans('allatrack.eurodrinks::lang.brand.press_load_button')  ?></li>
+        </ul>
+    </div>
+</div>
+
+<?php if (isset($last_update)):?>
+    <div class="callout fade in callout-info no-subheader">
+        <div class="header">
+            <i class="icon-info"></i>
+            <h3><?= e( trans('allatrack.eurodrinks::lang.brand.last_update', ['last_update'=> $last_update])) ?></h3>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?= $this->widget->errorsWidget->render() ?>
+
+<?php if (isset($success) && $success===true): ?>
+    <p data-control="flash-message" data-interval="10" class="success">
+        <span><?= trans('allatrack.eurodrinks::lang.brand.stat_file_uploaded')?></span>
+    </p>
+<?php endif; ?>
+
+<?php if (!$this->fatalError): ?>
+    <?= Form::open(['url' => 'backend/allatrack/eurodrinks/stat/upload',  'files' => true]) ?>
+
+                <div class="layout-row">
+                    <?= Form::label('stat_file', trans('allatrack.eurodrinks::lang.brand.stat_upload_file'),  ['class' => '']) ?>
+                    <?= Form::file("stat_file") ?>
+                    <br>
+                    <div class="form-buttons">
+                        <div class="loading-indicator-container">
+                            <button type="submit" class="btn btn-primary">
+                                <?= trans('allatrack.eurodrinks::lang.brand.upload') ?>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+    <?= Form::close() ?>
+
+<?php else: ?>
+
+    <p class="flash-message static error"><?= e($this->fatalError) ?></p>
+    <p><a href="<?= Backend::url('allatrack/eurodrinks/brands') ?>" class="btn btn-default">Return to brands list</a></p>
+
+<?php endif ?>
+

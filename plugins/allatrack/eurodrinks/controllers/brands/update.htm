@@ -1,0 +1,77 @@
+<?php Block::put('breadcrumb') ?>
+    <ul>
+        <li><a href="<?= Backend::url('allatrack/eurodrinks/brands') ?>">
+            <?= trans('allatrack.eurodrinks::lang.brand.manage') ?>
+        </a></li>
+        <li><?= e($this->pageTitle) ?></li>
+    </ul>
+<?php Block::endPut() ?>
+
+<?php if (!$this->fatalError): ?>
+
+    <?= Form::open(['class' => 'layout']) ?>
+
+        <div class="layout-row">
+            <div class="padded-container layout">
+                <div class="layout-row">
+                    <?= $this->formRender() ?>
+                </div>
+                <div class="layout-row">
+
+                <div class="form-buttons">
+                    <div class="loading-indicator-container">
+                        <button
+                                type="submit"
+                                data-request="onSave"
+                                data-request-data="redirect:0"
+                                data-hotkey="ctrl+s, cmd+s"
+                                data-load-indicator="Saving Brand..."
+                                class="btn btn-primary">
+                            <?=trans('allatrack.eurodrinks::lang.save') ?>
+                        </button>
+                        <button
+                                type="button"
+                                data-request="onSave"
+                                data-request-data="close:1"
+                                data-hotkey="ctrl+enter, cmd+enter"
+                                data-load-indicator="Saving Brand..."
+                                class="btn btn-default">
+                            <?=trans('allatrack.eurodrinks::lang.save_and_close') ?>
+                        </button>
+                        <button
+                                type="button"
+                                class="oc-icon-trash-o btn-icon danger pull-right"
+                                data-request="onDelete"
+                                data-load-indicator="Deleting Brand..."
+                                data-request-confirm="Delete this brand?">
+                        </button>
+                        <span class="btn-text">
+                    <?=trans('allatrack.eurodrinks::lang.or') ?>
+                            <a href="<?= Backend::url('allatrack/eurodrinks/brands') ?>">
+                                <?=trans('allatrack.eurodrinks::lang.cancel') ?>
+                            </a>
+                </span>
+                    </div>
+                </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+
+    <?= Form::close() ?>
+
+<?php else: ?>
+    <div class="layout-row">
+        <div class="padded-container layout">
+        <p class="flash-message static error"><?= e($this->fatalError) ?></p>
+        <p>
+            <a href="<?= Backend::url('allatrack/eurodrinks/brands') ?>" class="btn btn-default">
+                <?=trans('allatrack.eurodrinks::lang.return_to_list') ?>
+            </a>
+        </p>
+        </div>
+    </div>
+<?php endif ?>

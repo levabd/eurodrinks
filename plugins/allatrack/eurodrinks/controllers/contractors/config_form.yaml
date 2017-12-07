@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Contractor
+
+# Model Form Field configuration
+form: $/allatrack/eurodrinks/models/contractor/fields.yaml
+
+# Model Class name
+modelClass: Allatrack\Eurodrinks\Models\Contractor
+
+# Default redirect location
+defaultRedirect: allatrack/eurodrinks/contractors
+
+# Create page
+create:
+    title: allatrack.eurodrinks::lang.contractor.add
+    redirect: allatrack/eurodrinks/contractors/update/:id
+    redirectClose: allatrack/eurodrinks/contractors
+
+# Update page
+update:
+    title: allatrack.eurodrinks::lang.contractor.edit
+    redirect: allatrack/eurodrinks/contractors
+    redirectClose: allatrack/eurodrinks/contractors
+
+# Preview page
+preview:
+    title: Preview Contractor

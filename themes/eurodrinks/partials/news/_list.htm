@@ -1,0 +1,16 @@
+{% for post in posts %}
+
+    {% if (loop.first) and (isAjax) %}
+        <div class="delimiter"></div>
+    {% endif %}
+
+    {% partial "news/_preview" post=post  %}
+
+    {% if loop.last == false %}
+        <div class="delimiter"></div>
+    {% endif %}
+
+{% else %}
+    <span>{{ 'No news records'|_ }}</span>
+{% endfor %}
+

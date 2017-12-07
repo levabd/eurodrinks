@@ -1,0 +1,58 @@
+[viewBag]
+==
+<div class="article">
+    <div class="row">
+
+        {% if post.image %}
+            <div class="col-lg-6 hidden-md-down">
+                <a href="/{{ postPage }}/{{ post.slug }}">
+                    <img src="{{ post.image|media }}" alt="{{ post.title }}">
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="{% if post.image %}col-lg-6{% else %}col-lg-12{% endif %} hidden-md-down">
+            <h1><a href="/{{ postPage }}/{{ post.slug }}">{{ post.lang(currentLocale).title }}</a></h1>
+            <span class="date text-lowercase">{{post.created_at|handle_news_date}}</span>
+
+                {% if post.introductory %}
+                    {{ post.introductory|raw }}
+                {% elseif post.content %}
+                    {{ post.content|raw }}
+                {% endif %}
+
+            <p class="text-right">
+                <a href="/{{ postPage }}/{{ post.slug }}">{{'View post'|_}}</a>
+            </p>
+        </div>
+
+        <!-- Small devices/ screens -->
+        <div class="col-sm-12 hidden-lg-up">
+            <div class="col-sm-12" style="margin-bottom: 15px;">
+                <h1><a href="/{{ postPage }}/{{ post.slug }}">{{ post.lang(currentLocale).title }}</a></h1>
+                <span class="date">{{post.created_at|handle_news_date}}</span>
+            </div>
+            <div class="col-sm-12"> 
+                {% if post.image %}
+
+                <a href="/{{ postPage }}/{{ post.slug }}">
+                    <img src="{{ post.image|media }}" alt="{{ post.title }}">
+                </a>
+                {% endif %}</div>
+        </div>
+        <div class="col-sm-12 hidden-lg-up" style="margin-top: 20px;">
+            <div class="col-sm-12">
+
+                    {% if post.introductory %}
+                         {{ post.introductory|raw }}
+                    {% elseif post.content %}
+                         {{ post.content|raw }}
+                    {% endif %}
+
+                <p class="text-right">
+                    <a href="/{{ postPage }}/{{ post.slug }}">{{'View post'|_}}</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
