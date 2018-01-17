@@ -137,14 +137,14 @@ class Plugin extends PluginBase {
                 'use_brand'       => [
                     'context' => ['create', 'update'],
                     'type'    => 'checkbox',
-                    'label'   => 'backend::lang.user.use_brand',
-                    'default' => 'false'
+                    'label'   => 'allatrack.eurodrinks::lang.user.link_to_brand',
+                    'default' => 'false',
                 ],
                 'brand_id'        => [
                     'context'     => ['create', 'update'],
                     'type'        => 'dropdown',
-                    'label'       => 'backend::lang.user.brand',
-                    'emptyOption' => 'backend::lang.user.select_brand',
+                    'label'       => 'allatrack.eurodrinks::lang.user.brand',
+                    'emptyOption' => 'allatrack.eurodrinks::lang.user.select_brand',
                     'trigger'     => [
                         'action'    => 'show|empty',
                         'field'     => 'use_brand',
@@ -154,14 +154,14 @@ class Plugin extends PluginBase {
                 'temporal_user'   => [
                     'context' => ['create', 'update'],
                     'type'    => 'checkbox',
-                    'label'   => 'backend::lang.user.temporal_user',
-                    'default' => 'false'
+                    'label'   => 'allatrack.eurodrinks::lang.user.temporal_user',
+                    'default' => 'true',
                 ],
                 'available_until' => [
                     'context' => ['create', 'update'],
                     'type'    => 'datepicker',
-                    'label'   => 'backend::lang.user.available_until',
-                    'comment' => 'backend::lang.user.available_until_comment',
+                    'label'   => 'allatrack.eurodrinks::lang.user.available_until',
+                    'comment' => 'allatrack.eurodrinks::lang.user.available_until_comment',
                     'trigger' => [
                         'action'    => 'show',
                         'field'     => 'temporal_user',
@@ -324,7 +324,6 @@ class Plugin extends PluginBase {
 
     public function handleNewsDate($date)
     {
-
         if (is_null($date)){
             return "No data in post";
         }

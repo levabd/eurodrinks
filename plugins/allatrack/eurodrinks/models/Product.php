@@ -36,6 +36,7 @@ class Product extends Model {
         'name_ru'        => 'between:0,255',
         'name_en'        => 'required|between:3,255',
         'name_uk'        => 'between:0,255',
+        'display_name'   => 'between:0,255',
 //        'capacity'       => 'required|numeric|digits_between:0,4|regex:/[0-9.,].+$/',
         'brand_id'       => 'required|exists:allatrack_eurodrinks_brands,id',
         'description_ru' => 'between:0,3000',
@@ -65,11 +66,41 @@ class Product extends Model {
     public $morphMany = [];
 
     public $attachOne = [
-        'image' => 'System\Models\File',
+        'image'  => 'System\Models\File',
         'public' => true
     ];
 
     public $attachMany = [];
 
     public $hasManyThrough = [];
+
+    public function getNameUkAttribute($value)
+    {
+        return addslashes($value);
+    }
+
+    public function getNameRuAttribute($value)
+    {
+        return addslashes($value);
+    }
+
+    public function getNameEnAttribute($value)
+    {
+        return addslashes($value);
+    }
+
+    public function getDescriptionEnAttribute($value)
+    {
+        return addslashes($value);
+    }
+
+    public function getDescriptionRuAttribute($value)
+    {
+        return addslashes($value);
+    }
+
+    public function getDescriptionKzAttribute($value)
+    {
+        return addslashes($value);
+    }
 }

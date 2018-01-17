@@ -53,4 +53,19 @@ class Address extends Model
     public $attachOne = [];
     public $attachMany = [];
 
+    public function getNameUkAttribute($value)
+    {
+        return addslashes($value);
+    }
+
+    public function getNameRuAttribute($value)
+    {
+        return addslashes($value);
+    }
+
+    public function getNameEnAttribute($value)
+    {
+        //dd($value, addslashes($value));
+        return addslashes($value);
+    }
 }

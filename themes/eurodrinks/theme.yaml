@@ -1,9 +1,5 @@
-name: eurodrinks
-description: 'Eurodrinks website'
-author: 'Allatrack'
-homepage: 'eurodrinks.ua'
+name: eurostyle
+description: 'Дизайн от заказчика'
+author: Eurodrinks
+homepage: ''
 code: ''
-require:
-    - Allatrack.Eurodrinks
-    - Indikator.News
-    - RainLab.Translate

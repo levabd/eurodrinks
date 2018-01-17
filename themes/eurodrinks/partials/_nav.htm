@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-plashka">
+    <a class="navbar-brand d-block d-sm-block d-md-block d-lg-none d-xl-none" href="#" data-toggle="collapse" data-target="#app-nav"
+       aria-controls="app-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <img src="{{'assets/img/Logo.png'|theme}}" alt="Header logo" >
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#app-nav"
+            aria-controls="app-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-md-center" id="app-nav">
+
+        <ul class="navbar-nav eurodrinks text-uppercase {{currentLocale}}">
+            <li class="nav-item-brand d-xl-block d-lg-block d-md-none d-sm-none d-none">
+                <a href="/"></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#" id="link-main">{{'Main'|_}}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="link-products"><span>{{'Product'|_}}</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="link-about"><span>{{'About us'|_}}</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="link-news"><span>{{'News'|_}}</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="link-contacts"><span>{{'Contacts'|_}}</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="link-shop"><span>{{'Shop'|_}}</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="link-archive"><span>{{'Archive'|_}}</span></a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="link-language" role="button"
+                   aria-haspopup="true" aria-expanded="false"><span>{{currentLocale}}</span></a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#" data-request="onSwitchLocale" data-request-data="locale:'uk'">uk</a>
+                    <a class="dropdown-item" href="#" data-request="onSwitchLocale" data-request-data="locale:'ru'">ru</a>
+                    <a class="dropdown-item" href="#" data-request="onSwitchLocale" data-request-data="locale:'en'">en</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

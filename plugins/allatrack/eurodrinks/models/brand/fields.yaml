@@ -46,6 +46,17 @@ fields:
         span: left
         cssClass: col-sm-3
 
+    style_class:
+        label: allatrack.eurodrinks::lang.style_class
+        span: left
+        cssClass: col-sm-3
+
+    is_displayed:
+        label: allatrack.eurodrinks::lang.is_on_main
+        span: left
+        type: checkbox
+        cssClass: col-sm-3
+
     image:
         label: allatrack.eurodrinks::lang.product.image
         type: fileupload

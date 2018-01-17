@@ -1,0 +1,153 @@
+<div class="modal fade-scale modal-centered" id="modal-feedback-send" tabindex="-1" role="dialog"
+     aria-labelledby="modal-center"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <!--Внимание-->
+                    {{'Attention'|_}}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{'Message was send to Eurodrinks, we will answer us soon as possible'|_}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    {{'Close'|_}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade-scale modal-centered" id="modal-feedback-validation" tabindex="-1" role="dialog"
+     aria-labelledby="modal-center"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <!--Внимание-->
+                    {{'Attention'|_}}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--Продукция данного бренда ещё не заполнена. Попробуйте посмотреть другие бренды.-->
+                <div id="validation-body"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    {{'Close'|_}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container contacts">
+    <div class="row">
+        <div class="col contacts-col">
+            <aside class="contact-left-sidebar">
+                <h1 id="contacts-title">{{'Contacts'|_}}</h1>
+                <div class="row contact-item">
+                    <div class="icon-phone-rounded contact-item-icon f-left"></div>
+                    <div class="contact-item-info f-left">044 220 6020</div>
+                </div>
+
+                <div class="row contact-item">
+                    <div class="icon-envelope-rounded contact-item-icon"></div>
+                    <div class="contact-item-info">i.kolotai@edrinks.com.ua</div>
+                </div>
+
+                <div class="row contact-item">
+                    <div class="icon-map-rounded contact-item-icon"></div>
+                    <!-- How to get there? -->
+                    <div class="contact-item-info" style="width: 310px;">{{'Kiev, Electrotechnical 47g'|_}}<p><a
+                            href="">{{'How to get there?'|_}}</a></p></div>
+                </div>
+                <h2>{{'Contacts form'|_}}</h2>
+                <p>
+                    {{'Contact us'|_}}
+                </p>
+
+                <form id="contact-us-form">
+                    <div class="form-group">
+                        <label for="name">{{'You name:'|_}}</label>
+                        <input type="text"
+                               class="form-control" name="name" id="name"
+                               aria-describedby="nameHelp"
+                               autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">{{'E-mail:'|_}}</label>
+                        <input type="email" class="form-control" name="email" id="email"
+                               aria-describedby="emailHelp" autocomplete="off">
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="message">{{'Message:'|_}}</label>
+                        <textarea class="form-control" name="message"  aria-describedby="messageHelp" id="message" rows="3"></textarea>
+                    </div>
+
+                    <button id="contact-from-submit-button" type="submit">{{'Send message'|_}}</button>
+                </form>
+            </aside><!-- .left-sidebar -->
+        </div>
+    </div>
+</div>
+
+<div id="map"></div>
+
+{% put scripts %}
+<script type="text/javascript">
+  $('#contact-us-form').submit(function (e) {
+    e.preventDefault();
+
+    // validation input
+    var $name = $('#name');
+    if (!$name.val()){
+
+      $('#validation-body').text(trans('name_required'));
+      $('#modal-feedback-validation').modal('show');
+      return
+    }
+    var $email = $('#email');
+    if (!$email.val()){
+      $('#validation-body').text(trans('email_required'));
+      $('#modal-feedback-validation').modal('show');
+      return
+    }
+    var $message = $('#message');
+    if (!$message.val()){
+      $('#validation-body').text(trans('message_required'));
+      $('#modal-feedback-validation').modal('show');
+      return
+    }
+
+    $.request('onSendFeedback', {
+      data: {
+        name: $name.val(),
+        email: $email.val(),
+        message: $message.val(),
+      },
+      complete: function (data) {
+        $('#modal-feedback-send').modal('show');
+        $name.val('');
+        $email.val('');
+        $message.val('');
+      }
+    });
+
+  });
+</script>
+{% endput %}

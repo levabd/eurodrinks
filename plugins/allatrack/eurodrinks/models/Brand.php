@@ -37,6 +37,8 @@ class Brand extends Model
      */
     protected $fillable = ['name'];
 
+    protected $appends = ['product_chunk_by_four', 'product_chunk_by_two'];
+
     /**
      * @var array Relations
      */
@@ -58,4 +60,21 @@ class Brand extends Model
         'public' => false
     ];
     public $attachMany = [];
+
+    public function getProductChunkByFourAttribute()
+    {
+        if ($this->products()->count()>0){
+
+            return $this->products()->where('is_displayed', true)->with('image')->get()->chunk(4);
+        }
+        return $this->products;
+    }
+
+    public function getProductChunkByTwoAttribute()
+    {
+        if ($this->products()->count()>0){
+            return $this->products()->where('is_displayed',true)->with('image')->get()->chunk(2);
+        }
+        return $this->products;
+    }
 }

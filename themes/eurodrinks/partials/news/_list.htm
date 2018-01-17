@@ -1,16 +1,13 @@
-{% for post in posts %}
+<div class="row article post-list">
 
-    {% if (loop.first) and (isAjax) %}
-        <div class="delimiter"></div>
-    {% endif %}
+{% for post in posts %}
 
     {% partial "news/_preview" post=post  %}
 
-    {% if loop.last == false %}
-        <div class="delimiter"></div>
-    {% endif %}
-
 {% else %}
-    <span>{{ 'No news records'|_ }}</span>
+    <div class="col">
+        <p>{{ 'No news records'|_ }}</p>
+    </div>
 {% endfor %}
 
+</div>

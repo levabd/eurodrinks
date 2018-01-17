@@ -1,176 +1,140 @@
-var blockToRender = '<div class="bottles"></div> ';
+var BrandHandler = function BrandHandler(brands){
 
-var Component = Vue.component('brand-products', {
-  template: '<div>\
-                   <img :id="\'product-image-\'+product.id" \
-                    :src="product.image.path"\
-                    :alt="product.name" \
-                    v-for="product in products" :key="product.id"\
-                    @click="selectItem(product.id, $event)">\
-                </div>',
-  props: {
-    products: {
-      type: Array,
-      default: [],
-      required: true,
-    }
-  },
-  methods: {
-    selectItem: function (productId, event) {
-      // $('.brand-product-box img.selected').each(function (index, element) {
-      //   element.classList.remove('selected');
-      // });
-      // event.target.classList.add('selected');
-    }
-  }
-});
+  brands.forEach(function (_brand, index) {
+    var newChunkByFour = [];
+    _brand.product_chunk_by_four.forEach(function (chunk) {
 
-var app = new Vue({
-  el: '#vue-app',
-  data: function () {
-    return {
-      brands: window.brands,
-      currentWaitingBrandId: null,
-      currentWaitingProductRowIndex: null,
-      selectedBrand: this.initSelectedProducts(),
-      currentProductRowIndex: null,
-      previousSelectedBrandId: null
-    }
-  },
-  components: {
-    // <my-component> будет доступен только в шаблоне родителя
-    'brand-products': Component
-  },
-  computed: {
+      if (!Array.isArray(chunk)) {
 
-    activeBrand: function () {
-      var vm = this;
-      var selected = null;
-      Object.keys(vm.selectedBrand).forEach(function (kei) {
-        if (vm.selectedBrand[kei]) {
-          selected = kei;
-        }
-      });
-      return selected
-    }
-  },
-  methods: {
-    brandChunk:function(){
-      var i, j, temparray, chunk = 4;
-      var brandChunk = [];
-      for (i = 0, j = window.brands.length; i < j; i += chunk) {
-        temparray = window.brands.slice(i, i + chunk);
-        brandChunk.push(temparray);
-      }
-    return brandChunk
-    },
-
-    initSelectedProducts: function () {
-      var selectedBrand = {};
-
-      this.brandChunk().forEach(function (brands) {
-        brands.forEach(function (brand) {
-          selectedBrand[brand.id] = false;
-        })
-      });
-
-      return selectedBrand;
-    },
-    unSelectSelectedItems: function () {
-      var vm = this;
-      $('.col-lg-3.col-md-6.text-center.brand-box').each(function (index, element) {
-        element.classList.remove('selected');
-        vm.currentProductRowIndex = null;
-      });
-
-      $('.brand-product-box').children().each(function (index, element) {
-        element.classList.remove('selected');
-        vm.currentProductRowIndex = null;
-      });
-    },
-    setActiveBrand: function (brandId, currentWaitingProductRowIndex) {
-      this.selectedBrand[brandId] = true;
-      this.currentProductRowIndex = currentWaitingProductRowIndex;
-    },
-    getBrandById: function (brandId) {
-      var brand = null;
-      this.brands.forEach(function (_brand) {
-        if (_brand.id === parseInt(brandId)) {
-          brand = _brand
-        }
-      });
-      if (brand === null) {
-        console.log("Brand with id " + brandId + "not found");
-      }
-      return brand
-    },
-    showBrandProducts: function (brandId, currentProductRowIndex, event) {
-
-      var brandProductNumber = this.getBrandById(brandId).products.length;
-
-
-      console.log(brandProductNumber);
-      if (brandProductNumber>10)
-
-      $('#product-row-' + currentProductRowIndex)
-        .show(8, 'ease-out')
-        .animate({
-            height: '150px',
-          }
-        )
-      var vm = this;
-
-      if (parseInt(vm.activeBrand) === brandId) {
-        vm.currentProductRowIndex = null;
-        vm.previousSelectedBrandId = vm.activeBrand;
-        vm.selectedBrand[vm.activeBrand] = false;
-        return
-      }
-
-      // console.log(vm.currentProductRowIndex, currentProductRowIndex);
-      if (vm.activeBrand !== null) {
-        vm.previousSelectedBrandId = vm.activeBrand;
-        var element = document.getElementById('brand-box-' + brandId).parentNode;
-        element.classList.remove('unselected');
-        element.classList.add('selected');
-
-
-        // vm.currentWaitingBrandId = brandId;
-        // vm.currentWaitingProductRowIndex = currentProductRowIndex;
-
-        // Object.keys(vm.selectedBrand).forEach(function (brandBoxKey) {
-        //     vm.selectedBrand[brandBoxKey] = false;
-        // });
-        //
-        //
-        // vm.currentWaitingBrandId = brandId;
-        // vm.currentWaitingProductRowIndex = currentProductRowIndex;
-        //
-        // vm.currentProductRowIndex = null;
+        var _newChunk = [];
+        Object.keys(chunk).forEach(function (t, number) {
+          _newChunk.push(chunk[t])
+        });
+        newChunkByFour.push(_newChunk)
 
       } else {
-        vm.currentProductRowIndex = currentProductRowIndex;
-        vm.selectedBrand[brandId] = true;
+        newChunkByFour.push(chunk)
       }
-    },
-    getBrandProductId: function (id) {
-      return 'brand-' + id + '-products-box';
-    },
-    showBrandProductsOnMup: function (id) {
-      return 'brand-' + id + '-products-box';
-    },
-    afterLeave: function () {
+    });
 
-      if (this.currentWaitingBrandId !== null && this.currentWaitingProductRowIndex !== null) {
-        this.setActiveBrand(this.currentWaitingBrandId, this.currentWaitingProductRowIndex);
-        this.currentWaitingBrandId = null;
-        this.currentWaitingProductRowIndex = null;
+    brands[index].product_chunk_by_four= newChunkByFour;
+    var newChunkByFTwo = [];
+
+    _brand.product_chunk_by_two.forEach(function (chunk) {
+      if (!Array.isArray(chunk)) {
+        var _newChunk = [];
+        Object.keys(chunk).forEach(function (t, number) {
+          _newChunk.push(chunk[t])
+        });
+        newChunkByFTwo.push(_newChunk)
+      } else {
+        newChunkByFTwo.push(chunk)
       }
+    });
+    brands[index].product_chunk_by_two= newChunkByFTwo;
+
+  });
+  this.brands = brands;
+
+  var findBrand = function findBrand(brandId) {
+    if (!brandId){
+      console.warn('CarouselRenderer::findBrand - No brand id provided');
+      return
+    }
+    var brandFound = null;
+    self.brands.forEach(function (brand) {
+      if (brand.id === brandId) {
+        brandFound = brand
+      }
+    });
+    self.brandId = brandId;
+    return brandFound;
+  }
+
+  var hasProducts = function hasProducts(brandId){
+    if (!brandId){
+      console.warn('CarouselRenderer::findBrand - No brand id provided');
+      return
+    }
+
+    return this.findBrand(brandId).products.length;
+  }
+  var self =this;
+  return {
+    findBrand: findBrand,
+    hasProducts:hasProducts
+  }
+};
+
+var CarouselRenderer = function CarouselRenderer(defaultImage){
+  this.defaultImage= defaultImage;
+  var self = this;
+  return {
+    renderBy: function renderBy(brand, id, array_to_handle) {
+
+      var classes='';
+      if (id==='by-two-carousel-'){
+        classes= 'd-block d-md-none d-lg-none d-lx-none';
+      }else{
+        classes='d-none d-sm-none d-md-block d-lg-block d-lx-block';
+      }
+
+      var template = '<div id="' + id+ brand.id+ '" class="carousel slide '+classes+'" \
+      data-ride="carousel" data-interval="false" style="height: 100%;">\
+      <div class="carousel-inner" role="listbox" style="height: 100%;">';
+
+      array_to_handle.forEach(function (product_items, index) {
+        var is_active = index === 0 ? 'active' : '';
+        template += '<div class="carousel-item ' + is_active + '">\
+              <div class="carousel-caption d-flex flex-column" style="height: 100%;">\
+              <div class="brand-image-wrapper">\
+                   <img class="brand-logo" src="' + brand.image.path + '" alt="' + brand.import_name + '">\
+              </div>\
+              <div class="items d-flex justify-content-around ">';
+
+
+        product_items.forEach(function (product) {
+          template += '<div class="product-item assess" id="product-item-' + product.id + '">';
+          if (product.image) {
+            template += '<img data-src="' + product.image.path + '" class="product-item-image" alt="' + product.display_name + '" data-product-id="' + product.id + '">';
+          } else {
+            template += '<img data-src="'+self.defaultImage+'" alt="{{ product_item.name_uk }}">';
+          }
+
+          template += '<div class="name text-center">' + product.display_name + '</div>\
+      <div class="percentage">\
+        ' + product.capacity + '/' + product.degree + 'deg;\
+      </div>';
+          template += '</div>';
+        });
+        template += '</div>';
+        template += '</div>';
+        template += '</div>';
+      });
+      template += '</div>';
+      template += '<a class="carousel-control-prev" href="#' +id+ brand.id+ '-active" role="button"  data-slide="prev">\
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>\
+    <span class="sr-only">Previous</span>\
+    </a>\
+    <a class="carousel-control-next" href="#' + id+ brand.id + '-active" role="button"  data-slide="next">\
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>\
+    <span class="sr-only">Next</span>\
+    </a>';
+      template += '</div>';
+
+      return template;
     },
-    beforeEnterProductRow: function () {
-      $('html, body').animate({
-        scrollTop: $('#brand-box-' + this.activeBrand).offset().top - 10
-      }, 800);
+    renderBrand: function renderBrand(brand) {
+
+      var template = '<div class="row preview-products-row" style="display:none;height: 0px;" id="preview-products-row-' + brand.id + '">\
+    <div class="col-12">\
+    <div class="preview-products">'
+      template += this.renderBy(brand, 'by-two-carousel-', brand.product_chunk_by_two);
+      template += this.renderBy(brand, 'by-four-carousel-', brand.product_chunk_by_four);
+      template += '</div>';
+      template += '</div>';
+      template += '</div>';
+      return template;
     }
   }
-});
+};

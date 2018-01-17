@@ -1,121 +1,950 @@
-title = "Eurodrinks"
+title = "home"
 url = "/"
-layout = "home"
-description = "Home page"
 is_hidden = 0
+layout = "default"
 
 [localePicker]
-forceUrl = 0
+[newsPosts]
+pageNumber = "{{ :page }}"
+postsPerPage = 1
+noPostsMessage = "Отсутсвие постов"
+sortOrder = "published_at desc"
+postPage = "news/article"
+postFeatured = 0
 ==
 <?php
-use Allatrack\Eurodrinks\Models\Brand;
-use Allatrack\Eurodrinks\Models\Product;
 use Indikator\News\Models\Posts;
+use Allatrack\Eurodrinks\Models\Brand;
 
-function onStart()
-{
-    // $this['brands'] =  Brand::has('products.contractors.addresses')->with(['image', 'products.image', 'products.contractors.addresses'])->get()->toJson();
+function onStart(){
+    $this['brands'] = Brand::with(['products' => function ($query) {
+        $query->with('image', 'contractors.addresses')->where('is_displayed', true);
+    },  'image'])->whereIsDisplayed(true)->get()->toArray();
 
-$this['brands'] =  Brand::has('products')->with(['image', 'products.image'])->get()->toJson();
-$this['post'] = Posts::orderBy('created_at')->first();
-
-//$this['products']= Product::has('contractors.addresses')->with(['image', 'contractors.addresses', 'brand.image'])->get()->toArray();
-//dd(Brand::has('products.contractors.addresses')->with(['image', 'products.image', 'products.contractors.addresses'])->get()->toArray());
+    $this['google_map_api_key'] = config('allatrack.eurodrinks::google_map_api_key');
 }
+
+function onLoadPaginationData()
+{
+    $this['posts']  = Posts::listFrontEnd([
+        'page'    => request('next_page'),
+        'perPage' => request('per_page'),
+    ]);
+    $this['isAjax'] =  request()->ajax();
+    return ['posts'=>$this['posts'], 'content'=> $this->renderPartial('news/_list')];
+}
+
+function onLoadArticleData()
+{
+    $validator = Validator::make(request()->all(), [
+        'post_id' => 'required|exists:mysql.indikator_news_posts,id|max:255',
+    ]);
+
+    if ($validator->fails()) {
+        return response( $validator->errors(), 400);
+    }
+    $this['post'] = Posts::find(request('post_id'));
+    return  $this->renderPartial('news/_modal_content');
+}
+
+
+public function onSendFeedback()
+{
+
+    $validator = Validator::make(request()->all(), [
+        'name' => 'required|max:255',
+        'email' => 'required|email|max:255',
+        'message' => 'required|max:255',
+    ]);
+
+    if ($validator->fails()) {
+        return response( $validator->errors(), 400);
+    }
+
+    $vars= [
+        'name'=> request('name'),
+        'email'=> request('email'),
+        'msg'=> request('message'),
+    ];
+
+     Mail::send('allatrack.eurodrinks::mail.feedback', $vars, function($message) {
+        $message->to('eurodrinks.info@gmail.com');
+     });
+
+     Mail::send('allatrack.eurodrinks::mail.feedback_to_user', $vars, function($message) use($vars) {
+        $message->to($vars['email']);
+     });
+
+    return response('success', 200);
+}
+
 ?>
 ==
+<!-- Modal info -->
+<div class="modal fade-scale modal-centered" id="modal-center" tabindex="-1" role="dialog"
+     aria-labelledby="modal-center"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <!--Внимание-->
+                    {{'Attention'|_}}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--Продукция данного бренда ещё не заполнена. Попробуйте посмотреть другие бренды.-->
+                {{'No products for brand'|_}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    {{'Close'|_}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-{% put styles %}
-    <link href="{{ 'assets/vendor/vue2-animate.min.css'|theme }}" rel="stylesheet">
-{% endput %}
+<!-- Modal places -->
+<div class="modal fade-scale bd-example-modal-lg" id="modal-places" tabindex="-1" role="dialog"
+     aria-labelledby="modal-places"
+     aria-hidden="true">
 
-<div class="container transparent-container vue-app-container" id="vue-app">
+    <div class="modal-dialog-my modal-dialog-centered modal-lg">
+        <s href="#" class="close-button" id="close-map-modal-button" data-dismiss="modal" aria-label="Close"
+           aria-hidden="true">
+            {{'Close'|_}}
+        </s>
+        <div id="map-canvas"></div>
+    </div>
 
-    <!--Де знайти мій улюблений напій?-->
-    <h1 class="text-center">{{'Where can I find my favorite drink?'|_}}</h1>
+</div>
 
-    <div v-for="(brands, index) in brandChunk()">
-        <div class="row margin-10">
-            <div class="col-lg-3 col-md-6 text-center brand-box"
-                 :id="'brand-box-row-'+index"
-                 :class="{'selected': selectedBrand[brand.id], 'unselected': !selectedBrand[brand.id] }"
-                 v-for="brand in brands"
-                 :key="'brand-id-'+brand.id"
-            >
-                <img :src="brand.image.path"
-                     :alt="brand.import_name"
-                     :id="'brand-box-' + brand.id"
-                     @click="showBrandProducts(brand.id, index)"
-                >
+<!-- Modal news article -->
+<div class="modal fade-scale bd-example-modal-lg" id="modal-news-article" tabindex="-1" role="dialog"
+     aria-labelledby="modal-news-article"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content" id="modal-news-article-content"></div>
+    </div>
+</div>
+
+<main role="main">
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <div class="container">
+            <img data-src="{{'assets/img/Map.png'|theme}}"  id="header-map" alt="Map">
+            <object class="eu-title" type="image/svg+xml" data="{{'assets/img/svg/Title.svg'|theme}}"> Your browser does
+                not support SVGs
+            </object>
+        </div>
+    </div>
+
+    <div class="container-eurodrinks brands">
+        <div class="row">
+            <!--Продукція-->
+            <div class="col text-center text-uppercase products-title" id="products-title">{{'Products'|_}}</div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 d-flex flex-column  flex-sm-column flex-md-row flex-lg-row justify-content-center">
+                <div class="beer p-2 text-center">beer</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none "></div>
+                <div class="beer p-2 text-center">пиво</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none"></div>
+                <div class="beer p-2 text-center">cerveza</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none"></div>
+                <div class="beer p-2 text-center">bière</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none"></div>
+                <div class="beer p-2 text-center">pivo</div>
             </div>
         </div>
 
-        <div class="row" :id="'product-row-'+index">
-                <transition-group name="zoom" v-on:after-leave="afterLeave" tag="div" mode="out-in">
-                    <div class="col"
-                         :id="'brand-product-box-'+brand.id"
-                         v-for="brand in brands"
-                         :key="'brand-products-'+brand.id"
-                         v-show="selectedBrand[brand.id]"
-                    >
-                        <img v-for="product in brand.products"
-                             :id="'product-image-'+product.id"
-                             :src="product.image.path"
-                             :alt="product.name"
-                             :key="product.id">
-                    </div>
-                </transition-group>
+        <div class="row products d-flex flex-row justify-content-around">
+
+            {% for key, brand in brands %}
+
+            <div class="p-3 mt-2 circle {{ brand.style_class }} d-flex justify-content-center align-items-center"
+                 data-brand-number="{{ key+1 }}"
+                 data-brand-id="{{ brand.id }}">
+
+                {% if brand.image %}
+                <img src="{{ brand.image.path }}" alt="{{ brand.import_name }}">
+                {% else %}
+                <p>No image</p>
+                {% endif %}
+
+
+            </div>
+
+            {% else %}
+            <span>{{ 'No brands records'|_ }}</span>
+            {% endfor %}
+
+        </div>
+
+
+        <div class="row mineral-water text-lowercase" id="partners-block">
+            <div class="col-lg-12 d-flex flex-column  flex-sm-column flex-md-row flex-lg-row justify-content-center">
+                <div class="beer p-2 text-center">mineral water</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none "></div>
+                <div class="beer p-2 text-center">мінеральна вода</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none"></div>
+                <div class="beer p-2 text-center">agua mineral</div>
+            </div>
+            <div class="col-lg-12 d-flex flex-column  flex-sm-column flex-md-row flex-lg-row justify-content-center">
+                <div class="beer p-2 text-center">eau minérale</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none"></div>
+                <div class="beer p-2 text-center">minerální vody</div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="p-2 circle light-green2 d-flex justify-content-center align-items-center">
+                <img class="big" src="{{'assets/img/logo/24.png'|theme}}" alt="M">
+            </div>
+        </div>
+        <div class="row juice text-lowercase">
+            <div class="col-lg-12 d-flex flex-column  flex-sm-column flex-md-row flex-lg-row justify-content-center">
+                <div class="beer p-2 text-center">juice</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none "></div>
+                <div class="beer p-2 text-center">jus</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none"></div>
+                <div class="beer p-2 text-center">сік</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none"></div>
+                <div class="beer p-2 text-center">jugo</div>
+                <div class="delimiter p-2 d-none d-sm-none d-lg-block d-md-none"></div>
+                <div class="beer p-2 text-center">šťáva</div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="p-2 circle light-red d-flex justify-content-center align-items-center">
+                <img class="big" src="{{'assets/img/logo/25.png'|theme}}" alt="M">
+            </div>
         </div>
     </div>
 
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col-lg-12 delimiter"></div>
-    </div>
-</div>
-
-<div class="home-news-block">
     <div class="container">
         <div class="row">
-            <!-- ptserif caption -->
-            <div class="col-12 text-center">
-                <!--Останні новини-->
-                <h1 style="font-family: PtSerifCaption;">{{'Latest news'|_}}</h1>
+            <div class="col-lg-12 delimiter-row"></div>
+        </div>
+    </div>
+
+    <div class="container news">
+        <div class="row">
+            <div class="col">
+                <!--новини-->
+                <h1 class="text-center text-uppercase" id="news-title">{{'News'|_}}</h1>
             </div>
+        </div>
 
-            {% partial "news/_preview" post=post %}
+        {% partial "news/_list" posts=newsPosts.posts %}
 
-            <div class="col-12">
-                <div class="row justify-content-center">
-                    <div class="col-lg-3 col-sm-3 col-md-3">
-                        <a href="/news" class="news-see-all text-center">{{'All news'|_}}</a>
-                    </div>
-                </div>
+        <div class="row d-flex justify-content-center">
+            <!--Більше новин-->
+            <a href="/" class="news-see-all text-center">{{'News'|_}}</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 delimiter-row"></div>
+        </div>
+    </div>
+
+    <div class="container about">
+        <div class="row">
+            <div class="col">
+                <!--про нас-->
+                <h1 class="text-center text-uppercase" id="about-title">{{'About us'|_}}</h1>
+                <p class="text-center">
+                    {{'About us content in english'|_}}
+                    <!--Мы – это глобальная команда стратегов, архитекторов, дизайнеров, разработчиков и инженеров по-->
+                    <!--качеству. В сотрудничестве с вами, используя свой опыт и знания, мы создаем инновационные технологии-->
+                    <!--для решения наиболее важных задач вашего бизнеса.  -->
+                </p>
             </div>
         </div>
     </div>
 
-</div>
+    {% partial "_contact" %}
+</main>
+<script src="{{ [
+            'assets/vendor/bootstrap4/assets/js/vendor/jquery.min.js',
+            'assets/vendor/bootstrap4/assets/js/vendor/popper.min.js',
+            'assets/vendor/bootstrap4/dist/js/bootstrap.js',
+            'assets/vendor/hummer.js',
+            'assets/vendor/classListPolyfill.js',
+            'assets/js/pages/posts/index.js',
+            'assets/js/pages/home.js'
+            ]|theme  }}">
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{google_map_api_key}}&callback=initContactMap" async
+        defer></script>
+<script>
 
+  try {
+    /**
+     *
+     * @type number newsPagePaginationData.current_page
+     * @type number newsPagePaginationData.from
+     * @type number newsPagePaginationData.to
+     * @type number newsPagePaginationData.last_page
+     * @type number newsPagePaginationData.per_page
+     * @type number newsPagePaginationData.total
+     * @type string newsPagePaginationData.first_page_url
+     * @type string newsPagePaginationData.next_page_url
+     * @type string newsPagePaginationData.last_page_url
+     */
+    var newsPagePaginationData = {{newsPosts.posts.toArray() | json_encode | raw}};
+    var brands = {{brands | json_encode | raw}};
+    var newsPostIds = [];
+    newsPagePaginationData.data.forEach(function (newsPost) {
+      newsPostIds.push(newsPost.id);
+    });
+    window.isMobile = function() {
+      var check = false;
+      (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+      return check;
+    };
 
-{% put scripts %}
-    <script type="application/javascript">
-      try {
-        window.brands = JSON.parse({{brands | json_encode | raw}});
-      }catch(e){
-        console.error(e);
+  } catch (e) {
+    console.error(e);
+  }
+
+  var productsMap, map;
+  var kievLatLng = {lat: 50.5238728, lng: 30.6362378};
+  var officeLatLng = {lat: 50.523873, lng: 30.636238};
+
+  if (isMobile()) {
+    var $map= $('#header-map');
+    var map =$map.get(0);
+    map.style.opacity=0;
+  }
+
+    if (!isMobile()){
+      $('#header-map').attr('src', $('#header-map').data('src'));
+  }
+
+  var RangeGenerator = function RangeGenerator(){
+
+    /**
+     *
+     * @param dividend
+     * @param divider
+     * @returns {integer: number, modulo: number}
+     */
+    var davideBy = function (dividend, divider) {
+      return {
+        integer: Math.floor(dividend / divider),
+        modulo: dividend % divider
       }
-    </script>
+    };
 
-    <!-- Scripts -->
-    <script src="{{ [
-                    'assets/vendor/jquery.js',
-                    'assets/vendor/tether/js/tether.js',
-                    'assets/vendor/bootstrap4/js/bootstrap.js',
-                    'assets/vendor/vue.js',
-                    'assets/js/pages/home.js'
-                    ]|theme  }}"></script>
-{% endput %}
+    var ranges = null;
+    /**
+     *
+     * @param rangeBy
+     * @param divisionParams
+     * @param brandListLength
+     * @returns object
+     */
+    var generateRange = function (rangeBy, divisionParams, brandListLength) {
+      var resultObject = {};
+      var prevNumber = 0;
+      for (var i = 0; i <= divisionParams.integer; i++) {
+        if (i === divisionParams.integer && divisionParams.modulo === 0) {
+          break
+        }
 
+        var nextNumber = prevNumber + rangeBy;
+
+        switch (rangeBy) {
+          case 5:
+            if (i === divisionParams.integer && divisionParams.modulo !== 0) {
+              // 5 range
+              if (divisionParams.modulo <= 2) {
+                // 1 - add one item to row
+                resultObject[i + 1] = prevNumber + 2 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 2];
+              } else if (divisionParams.modulo > 2 && divisionParams.modulo <= 4) {
+
+                resultObject[i + 1] = prevNumber + 2 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 3];
+              } else if (divisionParams.modulo > 4 && divisionParams.modulo <= 6) {
+                // 2 - add two items to row
+                resultObject[i + 1] = prevNumber + 3 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 4];
+              } else if (divisionParams.modulo >= 6 && divisionParams.modulo <= 8) {
+                // 3 - add three items to row
+                resultObject[i + 1] = prevNumber + 4 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 5];
+              }
+            } else {
+              resultObject[i + 1] = [prevNumber + 1, nextNumber];
+            }
+
+            break;
+
+          case 4:
+            if (i === divisionParams.integer && divisionParams.modulo !== 0) {
+              // 4 range
+              if (divisionParams.modulo <= 2) {
+                // 1 - add one item to row
+                resultObject[i + 1] = prevNumber + 2 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 2];
+              } else if (divisionParams.modulo > 2 && divisionParams.modulo <= 5) {
+                // 2 - add two items to row
+                resultObject[i + 1] = prevNumber + 3 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 3];
+              } else if (divisionParams.modulo >= 5 && divisionParams.modulo <= 7) {
+                // 3 - add three items to row
+                resultObject[i + 1] = prevNumber + 4 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 4];
+              }
+            } else {
+              resultObject[i + 1] = [prevNumber + 1, nextNumber];
+            }
+
+            break;
+          case 3:
+            if (i === divisionParams.integer && divisionParams.modulo !== 0) {
+              // 4 range
+              if (divisionParams.modulo <= 3) {
+                // 1 - add one item to row
+                resultObject[i + 1] = prevNumber + 2 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 2]
+
+              } else if (divisionParams.modulo > 3 && divisionParams.modulo <= 6) {
+                // 2 - add two items to row
+                resultObject[i + 1] = prevNumber + 3 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 3];
+              }
+            } else {
+              resultObject[i + 1] = [prevNumber + 1, nextNumber];
+            }
+            break;
+          case 2:
+            if (divisionParams.modulo === 5) {
+              // 1 - add one item to row
+              resultObject[i + 1] = prevNumber + 2 > brandListLength ? [prevNumber + 1] : [prevNumber + 1, prevNumber + 2];
+            } else {
+              resultObject[i + 1] = [prevNumber + 1, nextNumber];
+            }
+            break;
+          default:
+            console.warn("rangeBy is not supporteb by getRanges functio. rangeBy:", rangeBy);
+        }
+
+        prevNumber = nextNumber
+      }
+
+      return resultObject
+    }
+
+    /**
+     *
+     * * */
+    var initRanges =  function initRanges(rangeArray){
+      var rangesToHandle = rangeArray || [5, 4, 3, 2];
+      var __ranges = {};
+      var brandListLength = parseInt('{{ brands|length }}');
+      if (brandListLength === 0) {
+        console.warn('Warn::brandListLength is 0')
+      }
+      rangesToHandle.forEach(function (element) {
+        var _ranges = davideBy(brandListLength, element);
+        __ranges [element] = generateRange(element, _ranges, brandListLength)
+      });
+      return __ranges;
+    }
+    ranges = initRanges();
+
+
+    var getNeededRange =  function getNeededRange(currentBrandNumber, rangeBy) {
+      var result = {};
+      if (rangeBy === 1) {
+        result['currentBrandNumber'] = currentBrandNumber;
+        result['range'] = [currentBrandNumber];
+        return result
+      }
+
+      Object.keys(ranges[rangeBy]).forEach(function (e) {
+        var range = ranges[rangeBy][e];
+        if (currentBrandNumber >= range[0] && currentBrandNumber <= range[1]) {
+          console.log('Row range: ', currentBrandNumber, range);
+          result['currentBrandNumber'] = currentBrandNumber;
+          result['range'] = range;
+        }
+      });
+      return result;
+    };
+
+    return {
+      ranges:  ranges,
+      getNeededRange: getNeededRange,
+    }
+  };
+  function initContactMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: -34.397, lng: 150.644},
+      zoom: 12,
+      styles: [
+        {
+          "featureType": "administrative",
+          "elementType": "all",
+          "stylers": [
+            {
+              "color": "#fefaef"
+            }
+          ]
+        },
+        {
+          "featureType": "administrative",
+          "elementType": "labels.text.fill",
+          "stylers": [
+            {
+              "color": "#444444"
+            }
+          ]
+        },
+        {
+          "featureType": "landscape",
+          "elementType": "all",
+          "stylers": [
+            {
+              "color": "#e9daaf"
+            }
+          ]
+        },
+        {
+          "featureType": "poi",
+          "elementType": "all",
+          "stylers": [
+            {
+              "visibility": "off"
+            }
+          ]
+        },
+        {
+          "featureType": "road",
+          "elementType": "all",
+          "stylers": [
+            {
+              "saturation": -100
+            },
+            {
+              "lightness": 45
+            },
+            {
+              "color": "#ffffff"
+            },
+            {
+              "visibility": "off"
+            }
+          ]
+        },
+        {
+          "featureType": "road",
+          "elementType": "labels",
+          "stylers": [
+            {
+              "visibility": "off"
+            }
+          ]
+        },
+        {
+          "featureType": "road.highway",
+          "elementType": "all",
+          "stylers": [
+            {
+              "visibility": "simplified"
+            }
+          ]
+        },
+        {
+          "featureType": "road.highway",
+          "elementType": "labels",
+          "stylers": [
+            {
+              "visibility": "off"
+            }
+          ]
+        },
+        {
+          "featureType": "road.arterial",
+          "elementType": "labels.icon",
+          "stylers": [
+            {
+              "visibility": "off"
+            }
+          ]
+        },
+        {
+          "featureType": "transit",
+          "elementType": "all",
+          "stylers": [
+            {
+              "visibility": "off"
+            }
+          ]
+        },
+        {
+          "featureType": "water",
+          "elementType": "all",
+          "stylers": [
+            {
+              "color": "#9bc2c4"
+            },
+            {
+              "visibility": "on"
+            }
+          ]
+        }
+      ]
+    });
+
+    map.setCenter({lat: 50.496096, lng: 30.552011});
+    new google.maps.Marker({
+      map: map,
+      draggable: true,
+      animation: google.maps.Animation.DROP,
+      position: officeLatLng
+    });
+
+    productsMap = new google.maps.Map(document.getElementById('map-canvas'), {
+      center: kievLatLng,
+      zoom: 12,
+    });
+
+    $('#modal-places').on('shown.bs.modal', function () {
+      google.maps.event.trigger(productsMap, "resize");
+      var center = new google.maps.LatLng(kievLatLng.lat, kievLatLng.lng);
+      productsMap.setCenter(center);
+    });
+  }
+
+  $(document).ready(function () {
+    console.log("ready!");
+
+    $('.products .circle').click(function (e) {
+      var target = null;
+      if (e.target.tagName === "IMG") {
+        target = e.target.parentNode;
+      } else {
+        target = e.target
+      }
+
+      var w = window,
+        d = document,
+        e = d.documentElement,
+        g = d.getElementsByTagName('body')[0],
+        x = w.innerWidth || e.clientWidth || g.clientWidth,
+        y = w.innerHeight || e.clientHeight || g.clientHeight,
+        currentBrandNumber = parseInt($(target).data('brandNumber'));
+
+
+      var rangeGenerator = RangeGenerator();
+
+
+      if (x >= 1200) {
+        initiateProductsRow(rangeGenerator.getNeededRange(currentBrandNumber, 5), target)
+      }
+
+      if (x < 1200 && x >= 992) {
+        initiateProductsRow(rangeGenerator.getNeededRange(currentBrandNumber, 4), target)
+      }
+
+      if (x < 992 && x >= 543) {
+        initiateProductsRow(rangeGenerator.getNeededRange(currentBrandNumber, 3), target)
+      }
+
+      if (x <= 543) {
+        initiateProductsRow(rangeGenerator.getNeededRange(currentBrandNumber, 1), target, true)
+      }
+    });
+
+
+    // Set the navigation
+    var ANIMATION_SPEED = 2000;
+
+    $('#link-main, #footer-home-link').click(function (e) {
+      e.preventDefault();
+      $('html, body').animate({scrollTop: $('#link-main').offset().top}, ANIMATION_SPEED);
+    });
+    $('#link-products, #footer-products-link').click(function (e) {
+      e.preventDefault();
+      $('html, body').animate({scrollTop: $('#products-title').offset().top}, ANIMATION_SPEED);
+    });
+    $('#link-about, #footer-about-link').click(function (e) {
+      e.preventDefault();
+      $('html, body').animate({scrollTop: $('#about-title').offset().top}, ANIMATION_SPEED);
+    });
+    $('#link-news, #footer-news-link').click(function (e) {
+      e.preventDefault();
+      $('html, body').animate({scrollTop: $('#news-title').offset().top}, ANIMATION_SPEED);
+    });
+    $('#link-contacts, #footer-contacts-link').click(function (e) {
+      e.preventDefault();
+      $('html, body').animate({scrollTop: $('#contacts-title').offset().top}, ANIMATION_SPEED);
+    });
+    $('#footer-partners-link').click(function (e) {
+      e.preventDefault();
+      $('html, body').animate({scrollTop: $('#partners-block').offset().top}, ANIMATION_SPEED);
+    });
+
+    var is_open = false;
+    var id_active = '';
+    var carousel_active_id_two = '';
+    var carousel_active_id_four = '';
+    var brand_number = null;
+    var markersArray = [];
+    var infoWindowArray = [];
+
+
+    function setSwipeListener(element, rangeObject) {
+      if (element instanceof NodeList) {
+        element.forEach(function (e) {
+          setSwipeListener(e, rangeObject)
+        });
+        return
+      }
+
+      var hammertime = new Hammer(element);
+
+      hammertime.on('swipeleft', function (ev) {
+        console.log('next');
+        $('#by-four-carousel-' + rangeObject.currentBrandNumber + '-active').carousel('next');
+        $('#by-two-carousel-' + rangeObject.currentBrandNumber + '-active').carousel('next');
+      }).on('swiperight', function (ev) {
+        console.log('prev');
+        $('#by-four-carousel-' + rangeObject.currentBrandNumber + '-active').carousel('prev');
+        $('#by-two-carousel-' + rangeObject.currentBrandNumber + '-active').carousel('prev');
+      });
+    }
+
+    function closeCarousel($carousel_active, paramsForOpening) {
+      $carousel_active.animate({height: "0px"}, 200, function () {
+        $carousel_active.remove();
+        $('#empty-block').animate({height: "0px"}, 200, function () {
+          $('#empty-block').remove();
+          id_active = '';
+          carousel_active_id_two = '';
+          carousel_active_id_four = '';
+          is_open = false;
+          brand_number = null;
+          if (paramsForOpening) {
+            openCarousel(paramsForOpening.rangeObject, paramsForOpening.target, paramsForOpening.one)
+          }
+        });
+      });
+    }
+
+    var brandId,
+      currentBrand,
+      carouselContainerTemplate,
+      lastBrandNumber,
+      insertAfter,
+      $carousel,
+      carousel,
+      currentCarouselFour,
+      currentCarouselTwo,
+      id,
+      $insertedCarousel ,
+      insertAfterRect ,
+      startOfTheProductsRowRect,
+      carouselRenderer = CarouselRenderer("{{'assets / img / brand_products / beer.png'|theme  }}"),
+      brandHandler = BrandHandler(brands);
+
+    function openCarousel(rangeObject, target, one) {
+
+      brandId = $(target).data('brandId');
+      currentBrand = brandHandler.findBrand(brandId);
+      carouselContainerTemplate = carouselRenderer.renderBrand(currentBrand);
+
+      if (!brandHandler.hasProducts(brandId)) {
+        console.warn("No products for brand with id: " + brandId);
+        $('#modal-center').modal('toggle');
+        return
+      }
+      lastBrandNumber = one ? rangeObject.range[0] : rangeObject.range[1];
+      insertAfter = $("*[data-brand-number=" + lastBrandNumber + "]");
+
+      if (!insertAfter.length) {
+        throw Error("Cant find element after which to paste products row. data-brand-number=", lastBrandNumber)
+      }
+      $(carouselContainerTemplate).insertAfter(insertAfter);
+
+      $carousel = $('#preview-products-row-' + brandId);
+      carousel = $carousel.get(0);
+      id = carousel.id;
+      currentCarouselTwo = carousel.querySelector('#by-two-carousel-' + rangeObject.currentBrandNumber);
+      currentCarouselFour = carousel.querySelector('#by-four-carousel-' + rangeObject.currentBrandNumber);
+
+      // init inserted carousel
+      $('.carousel').carousel({interval: false});
+
+      /// set ids
+      id_active = id + '-active';
+      carousel.id = id_active;
+      carousel_active_id_two = currentCarouselTwo.id + '-active';
+      currentCarouselTwo.id = carousel_active_id_two;
+      carousel_active_id_four = currentCarouselFour.id + '-active';
+      currentCarouselFour.id = carousel_active_id_four;
+
+      // set hammer carousel listener
+      setSwipeListener(carousel, rangeObject);
+      setSwipeListener(carousel.querySelector('a.carousel-control-next'), rangeObject);
+      setSwipeListener(carousel.querySelector('a.carousel-control-prev'), rangeObject);
+      setSwipeListener(carousel.querySelectorAll('img'), rangeObject);
+
+      setSwipeListener(currentCarouselTwo, rangeObject);
+      setSwipeListener(currentCarouselFour, rangeObject);
+
+      // hide carousel control links for one carousel page
+      if (currentCarouselTwo.querySelectorAll('.carousel-item').length === 1) {
+        currentCarouselTwo.querySelector('a.carousel-control-next').style.display = 'none';
+        currentCarouselTwo.querySelector('a.carousel-control-prev').style.display = 'none';
+      }
+      if (currentCarouselFour.querySelectorAll('.carousel-item').length === 1) {
+        currentCarouselFour.querySelector('a.carousel-control-next').style.display = 'none';
+        currentCarouselFour.querySelector('a.carousel-control-prev').style.display = 'none';
+      }
+
+      // load images (on first does not loaded)
+      [].forEach.call(carousel.querySelectorAll('img[data-src]'), function (img) {
+        img.setAttribute('src', img.getAttribute('data-src'));
+        img.onload = function () {
+          img.removeAttribute('data-src');
+        };
+      });
+
+      // paste empty block - for setting heigth for carousel
+      $('<div class="row preview-products-row-empty" style="height: 0;" id="empty-block"></div>').insertAfter($carousel);
+
+      // find set insertedCarousel margin
+      startOfTheProductsRowRect = $('.row.products').get(0).getBoundingClientRect();
+      insertAfterRect = insertAfter.get(0).getBoundingClientRect();
+      $insertedCarousel = $('#' + id_active);
+
+      $insertedCarousel.show();
+      $insertedCarousel.css('margin-top', (insertAfterRect.bottom - startOfTheProductsRowRect.top - 5) + 'px');
+
+      $('#empty-block').animate({height: "850px"}, 400, function () {
+        $insertedCarousel.animate({height: "850px"}, 400, function () {
+          is_open = true;
+          brand_number = rangeObject.currentBrandNumber;
+          $('html, body').animate({
+            scrollTop: $(carousel).offset().top - 10
+          }, 600);
+        });
+      });
+
+      $('.product-item-image').click(function (e) {
+
+        e.preventDefault();
+        var productId = $(this).data('productId');
+        var brand = null;
+
+        brands.forEach(function (_brand) {
+          if (_brand.id === brand_number) {
+            brand = _brand
+          }
+        });
+
+        if (!brand.products.length) {
+          console.log("Brand with id: " + brand.id + " does not has any products");
+          return
+        }
+
+        var product = null;
+        brand.products.forEach(function (_product) {
+          if (parseInt(_product.id) === parseInt(productId)) {
+            product = _product
+          }
+        });
+
+        if (!product) {
+          console.log("Product with id: " + productId + " not found");
+          return
+        }
+
+        var contractors = product.contractors;
+        if (!contractors.length) {
+          console.log("Product with id: " + productId + " does not have contractors");
+          return
+        }
+
+        var addressesTotal = [];
+        contractors.forEach(function (contractor) {
+          if (contractor.addresses.length) {
+            contractor.addresses.forEach(function (address) {
+              address['contractor_name'] = contractor.import_name;
+              addressesTotal.push(address);
+            });
+          }
+        });
+
+        function clearOverlays() {
+          for (var i = 0; i < markersArray.length; i++) {
+            markersArray[i].setMap(null);
+          }
+          markersArray.length = 0;
+        }
+
+        clearOverlays();
+
+        if (!addressesTotal.length) {
+          console.log("No addresses");
+          return
+        }
+
+        addressesTotal.forEach(function (_address) {
+          console.log(_address);
+          var marker = new google.maps.Marker({
+            map: productsMap,
+            draggable: true,
+            animation: google.maps.Animation.DROP,
+            position: {lat: _address.latitude, lng: _address.longitude}
+          });
+          var infowindow = new google.maps.InfoWindow({
+            content: '<p style="margin-top: 20px;"><b>Контрагент:</b> ' + _address.contractor_name + '</p>' +
+            '<p><b>Адрес:</b> ' + _address.name_en + '</p>'
+          });
+          infoWindowArray.push(infowindow);
+          marker.addListener('click', function toggleBounce() {
+            infoWindowArray.forEach(function (iw) {
+              iw.close();
+            });
+            setTimeout(function () {
+              infowindow.open(productsMap, marker);
+            }, 100);
+          });
+          markersArray.push(marker);
+        });
+
+
+        $('#modal-places').modal({keyboard: true, backdrop: 'static'}).modal('show');
+        var center = new google.maps.LatLng(addressesTotal[0].latitude, addressesTotal[0].longitude);
+        productsMap.setCenter(center);
+      });
+    }
+
+    function initiateProductsRow(rangeObject, target, one) {
+
+      if (is_open && brand_number !== null && rangeObject.currentBrandNumber === brand_number) {
+        closeCarousel($('#' + id_active));
+        return
+      }
+
+      if (brand_number !== null) {
+        closeCarousel($('#preview-products-row-' + brand_number + '-active'), {
+          rangeObject: rangeObject,
+          target: target,
+          one: one
+        });
+      }
+
+      if (is_open) {
+        closeCarousel($('#' + id_active));
+        return
+      }
+
+      openCarousel(rangeObject, target, one);
+    }
+  });
+
+
+</script>

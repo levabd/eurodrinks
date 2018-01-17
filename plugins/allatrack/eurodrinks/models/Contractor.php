@@ -94,4 +94,18 @@ class Contractor extends Model {
         return $result;
     }
 
+    public function getNameUkAttribute($value)
+    {
+        return addslashes($value);
+    }
+
+    public function getNameRuAttribute($value)
+    {
+        return addslashes($value);
+    }
+
+    public function getNameEnAttribute($value)
+    {
+        return addslashes($value);
+    }
 }

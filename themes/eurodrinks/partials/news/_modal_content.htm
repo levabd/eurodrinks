@@ -1,0 +1,28 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{ post.title }}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col">
+            <h1>{{ post.title }}</h1>
+            <span class="date">{{ post.published_at|handle_news_date }}</span>
+            {% if post.image %}<img src="{{ post.image|media }}" alt="{{ post.title }}">{% endif %}
+            <article id="article-{{post.id}}">
+                {% if (post.introductory) and (not post.content) %}
+                <div class="post-content">{{ post.introductory|raw }}</div>
+                {% elseif (post.introductory) and (post.content) %}
+                <div class="post-content">{{ post.content|raw }}</div>
+                {% elseif post.content %}
+                <div class="post-content">{{ post.content|raw }}</div>
+                {% endif %}
+                <div id="images-block-{{post.id}}"></div>
+            </article>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-warning" data-dismiss="modal">{{'Close'|_}}</button>
+</div>

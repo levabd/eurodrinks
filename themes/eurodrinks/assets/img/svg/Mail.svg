@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-name="Layer 1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <style type="text/css">.cls-1{fill:#bbab74;}
+            .cls-2{fill:#846744;}</style>
+    </defs>
+    <title>mail</title>
+    <path class="cls-2" d="M6,7V17H18V7H6ZM16.2,8L12,11.36,7.8,8h8.4ZM7,16V8.64l5,4,5-4V16H7Z"/>
+    <path class="cls-1" d="M12,1A11,11,0,1,1,1,12,11,11,0,0,1,12,1m0-1A12,12,0,1,0,24,12,12,12,0,0,0,12,0h0Z"/>
+</svg>

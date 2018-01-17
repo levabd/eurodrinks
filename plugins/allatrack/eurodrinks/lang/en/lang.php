@@ -158,4 +158,15 @@ return [
         12=> 'December :d, :y',
     ],
 
+    'name_required'=> 'Field "You name" is required',
+    'email_required'=> 'Field "Email" is required',
+    'message_required'=> 'Field "Message" is required',
+    'user'=>[
+        'temporal_user'=> 'Temporal user',
+        'available_until'=> 'Available until',
+        'available_until_comment'=> 'After thas date there is no assecc to the presentation page',
+        'brand'=> 'Brand',
+        'select_brand'=> 'Select brand',
+        'link_to_brand'=> 'Link to brand',
+    ],
 ];

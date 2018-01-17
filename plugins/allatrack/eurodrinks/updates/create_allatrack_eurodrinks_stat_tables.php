@@ -17,6 +17,10 @@ class CreateAllatrackEurodrinksStatTables extends Migration {
             $table->text('description_uk')->nillable();
             $table->text('description_en')->nillable();
 
+            // for main display view
+            $table->boolean('is_displayed')->default(false);
+            $table->text('style_class')->nillable();
+
             $table->string('slug', 255)->unique();
             $table->string('import_name', 255)->unique();
         });
@@ -68,11 +72,14 @@ class CreateAllatrackEurodrinksStatTables extends Migration {
             $table->string('name_ru', 255)->nillable();
             $table->string('name_uk', 255)->nillable();
             $table->string('name_en', 255);
+            $table->string('display_name', 255);
             $table->text('description_ru')->nillable();
             $table->text('description_uk')->nillable();
             $table->text('description_en')->nillable();
             $table->double('capacity')->default(0);
+            $table->double('degree')->default(0);
             $table->integer('brand_id')->unsigned();
+            $table->boolean('is_displayed')->default(false);
             $table->foreign('brand_id')->references('id')
                 ->on('allatrack_eurodrinks_brands')
                 ->onDelete('cascade');
@@ -97,11 +104,13 @@ class CreateAllatrackEurodrinksStatTables extends Migration {
             });
         }
 
-        Schema::dropIfExists('allatrack_eurodrinks_brands');
-        Schema::dropIfExists("allatrack_eurodrinks_brand_contractors");
-        Schema::dropIfExists("allatrack_eurodrinks_contractors_addresses");
         Schema::dropIfExists("allatrack_eurodrinks_contractors");
+        Schema::dropIfExists("allatrack_eurodrinks_contractors_addresses");
+        Schema::dropIfExists('allatrack_eurodrinks_brands');
+        Schema::dropIfExists('allatrack_eurodrinks_addresses');
+        Schema::dropIfExists('brand_contractor');
         Schema::dropIfExists('allatrack_eurodrinks_products');
         Schema::dropIfExists('product_contractor');
+        Schema::dropIfExists('contractor_address');
     }
 }

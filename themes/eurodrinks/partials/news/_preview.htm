@@ -1,58 +1,23 @@
 [viewBag]
 ==
-<div class="article">
-    <div class="row">
-
-        {% if post.image %}
-            <div class="col-lg-6 hidden-md-down">
-                <a href="/{{ postPage }}/{{ post.slug }}">
-                    <img src="{{ post.image|media }}" alt="{{ post.title }}">
-                </a>
-            </div>
+<div class="col-5 image-block">
+    {% if post.image %}
+        <a href="/{{ postPage }}/{{ post.slug }}" data-post-id="{{post.id}}">
+            <img class="news-preview-img shadowed" src="{{ post.image|media }}" alt="{{ post.title }}">
+        </a>
+    {% else %}
+        <a href="#" data-post-id="{{post.id}}">
+            <img class="news-preview-img shadowed" src="http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg" alt="{{ post.title }}">
+        </a>
+    {% endif %}
+</div>
+<div class="col-7 info-block">
+    <h2><a href="/{{ postPage }}/{{ post.slug }}" data-post-id="{{post.id}}">{{ post.lang(currentLocale).title }}</a></h2>
+        {% if post.introductory %}
+            {{ post.lang(currentLocale).introductory|raw }}
+        {% elseif post.content %}
+            {{ post.lang(currentLocale).content|raw }}
         {% endif %}
-
-        <div class="{% if post.image %}col-lg-6{% else %}col-lg-12{% endif %} hidden-md-down">
-            <h1><a href="/{{ postPage }}/{{ post.slug }}">{{ post.lang(currentLocale).title }}</a></h1>
-            <span class="date text-lowercase">{{post.created_at|handle_news_date}}</span>
-
-                {% if post.introductory %}
-                    {{ post.introductory|raw }}
-                {% elseif post.content %}
-                    {{ post.content|raw }}
-                {% endif %}
-
-            <p class="text-right">
-                <a href="/{{ postPage }}/{{ post.slug }}">{{'View post'|_}}</a>
-            </p>
-        </div>
-
-        <!-- Small devices/ screens -->
-        <div class="col-sm-12 hidden-lg-up">
-            <div class="col-sm-12" style="margin-bottom: 15px;">
-                <h1><a href="/{{ postPage }}/{{ post.slug }}">{{ post.lang(currentLocale).title }}</a></h1>
-                <span class="date">{{post.created_at|handle_news_date}}</span>
-            </div>
-            <div class="col-sm-12"> 
-                {% if post.image %}
-
-                <a href="/{{ postPage }}/{{ post.slug }}">
-                    <img src="{{ post.image|media }}" alt="{{ post.title }}">
-                </a>
-                {% endif %}</div>
-        </div>
-        <div class="col-sm-12 hidden-lg-up" style="margin-top: 20px;">
-            <div class="col-sm-12">
-
-                    {% if post.introductory %}
-                         {{ post.introductory|raw }}
-                    {% elseif post.content %}
-                         {{ post.content|raw }}
-                    {% endif %}
-
-                <p class="text-right">
-                    <a href="/{{ postPage }}/{{ post.slug }}">{{'View post'|_}}</a>
-                </p>
-            </div>
-        </div>
-    </div>
+    <!--Читать полностью-->
+    <a class="float-right" href="/" data-post-id="{{post.id}}">{{'Read'|_}}</a>
 </div>
