@@ -10,9 +10,9 @@ class CreateAllatrackEurodrinksStatTables extends Migration {
     {
         Schema::create('allatrack_eurodrinks_brands', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name_ru', 255)->nillable();
-            $table->string('name_uk', 255)->nillable();
-            $table->string('name_en', 255)->nillable();
+            $table->string('name_ru', 255)->nillable()->default('');
+            $table->string('name_uk', 255)->nillable()->default('');
+            $table->string('name_en', 255)->nillable()->default('');
             $table->text('description_ru')->nillable();
             $table->text('description_uk')->nillable();
             $table->text('description_en')->nillable();
