@@ -162,7 +162,7 @@ public function onSendFeedback()
             </div>
         </div>
 
-        <div class="row products d-flex flex-row justify-content-around">
+        <div class="row products ">
 
             {% for key, brand in brands %}
 
@@ -818,7 +818,6 @@ public function onSendFeedback()
       startOfTheProductsRowRect = $('.row.products').get(0).getBoundingClientRect();
       insertAfterRect = insertAfter.get(0).getBoundingClientRect();
       $insertedCarousel = $('#' + id_active);
-
       $insertedCarousel.show();
       $insertedCarousel.css('margin-top', (insertAfterRect.bottom - startOfTheProductsRowRect.top - 5) + 'px');
 
