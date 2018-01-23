@@ -87,9 +87,6 @@ var CarouselRenderer = function CarouselRenderer(defaultImage){
         var is_active = index === 0 ? 'active' : '';
         template += '<div class="carousel-item ' + is_active + '">\
               <div class="carousel-caption d-flex flex-column" style="height: 100%;">\
-              <div class="brand-image-wrapper">\
-                   <img class="brand-logo" src="' + brand.image.path + '" alt="' + brand.import_name + '">\
-              </div>\
               <div class="items d-flex justify-content-around ">';
 
 
@@ -127,8 +124,11 @@ var CarouselRenderer = function CarouselRenderer(defaultImage){
     renderBrand: function renderBrand(brand) {
 
       var template = '<div class="row preview-products-row" style="display:none;height: 0px;" id="preview-products-row-' + brand.id + '">\
-    <div class="col-12">\
-    <div class="preview-products">'
+      <div class="col-12">\
+         <div class="brand-image-wrapper text-center">\
+             <img id="brand-logo-'+brand.id+'" class="brand-logo" data-src="' + brand.image.path + '" alt="' + brand.import_name + '">\
+         </div>\
+            <div class="preview-products">';
       template += this.renderBy(brand, 'by-two-carousel-', brand.product_chunk_by_two);
       template += this.renderBy(brand, 'by-four-carousel-', brand.product_chunk_by_four);
       template += '</div>';

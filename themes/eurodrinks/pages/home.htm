@@ -112,13 +112,40 @@ public function onSendFeedback()
 <div class="modal fade-scale bd-example-modal-lg" id="modal-places" tabindex="-1" role="dialog"
      aria-labelledby="modal-places"
      aria-hidden="true">
-
-    <div class="modal-dialog-my modal-dialog-centered modal-lg">
-        <s href="#" class="close-button" id="close-map-modal-button" data-dismiss="modal" aria-label="Close"
-           aria-hidden="true">
-            {{'Close'|_}}
-        </s>
-        <div id="map-canvas"></div>
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <!--Внимание-->
+                    {{'Attention'|_}}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-2 d-flex justify-content-center">
+                            <img  id="modal-product-image" alt="">
+                        </div>
+                        <div class="col-10">
+                            <h4>{{'Product description'|_}}</h4>
+                            <p id="modal-product-description"></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col"><div id="map-canvas"></div></div>
+                    </div>
+                </div>
+                <!--Продукция данного бренда ещё не заполнена. Попробуйте посмотреть другие бренды.-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">
+                    {{'Close'|_}}
+                </button>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -243,7 +270,7 @@ public function onSendFeedback()
 
         <div class="row d-flex justify-content-center">
             <!--Більше новин-->
-            <a href="/" class="news-see-all text-center">{{'News'|_}}</a>
+            <a href="/" class="news-see-all text-center">{{'More news'|_}}</a>
         </div>
     </div>
 
@@ -299,6 +326,7 @@ public function onSendFeedback()
      */
     var newsPagePaginationData = {{newsPosts.posts.toArray() | json_encode | raw}};
     var brands = {{brands | json_encode | raw}};
+    var currentLocale = '{{currentLocale}}';
     var newsPostIds = [];
     newsPagePaginationData.data.forEach(function (newsPost) {
       newsPostIds.push(newsPost.id);
@@ -803,13 +831,16 @@ public function onSendFeedback()
         currentCarouselFour.querySelector('a.carousel-control-prev').style.display = 'none';
       }
 
-      // load images (on first does not loaded)
-      [].forEach.call(carousel.querySelectorAll('img[data-src]'), function (img) {
-        img.setAttribute('src', img.getAttribute('data-src'));
-        img.onload = function () {
-          img.removeAttribute('data-src');
-        };
-      });
+
+      function loadImages(){
+        // load images (on first does not loaded)
+        [].forEach.call(carousel.querySelectorAll('img[data-src]'), function (img) {
+          img.setAttribute('src', img.getAttribute('data-src'));
+          img.onload = function () {
+            img.removeAttribute('data-src');
+          };
+        });
+      }
 
       // paste empty block - for setting heigth for carousel
       $('<div class="row preview-products-row-empty" style="height: 0;" id="empty-block"></div>').insertAfter($carousel);
@@ -825,8 +856,11 @@ public function onSendFeedback()
         $insertedCarousel.animate({height: "850px"}, 400, function () {
           is_open = true;
           brand_number = rangeObject.currentBrandNumber;
+
+          loadImages()
+
           $('html, body').animate({
-            scrollTop: $(carousel).offset().top - 10
+            scrollTop: $(carousel).offset().top - 120
           }, 600);
         });
       });
@@ -891,7 +925,6 @@ public function onSendFeedback()
         }
 
         addressesTotal.forEach(function (_address) {
-          console.log(_address);
           var marker = new google.maps.Marker({
             map: productsMap,
             draggable: true,
@@ -913,6 +946,10 @@ public function onSendFeedback()
           });
           markersArray.push(marker);
         });
+
+        $('#modal-places .modal-title').text(product.display_name);
+        $('#modal-product-image').attr('src', product.image.path).attr('alt', product.display_name);
+        $('#modal-product-description').text(product['description_'+currentLocale]||trans('no_product_description'));
 
 
         $('#modal-places').modal({keyboard: true, backdrop: 'static'}).modal('show');
