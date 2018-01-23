@@ -267,8 +267,19 @@ footer .container {
 footer {
     height: 126px;
     width: 100%;
-    background-image: url(../img/BgDouble.jpg);
-    background-repeat-y: repeat;
+    /*background-image: url(../img/BgDouble.jpg);*/
+    /*background-repeat-y: repeat;*
+
+    /
+     */
+
+    background: -moz-linear-gradient(180deg, rgba(252,249,207,1) 0%, rgba(254,253,237,1) 50%, rgba(252,249,207,1) 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(252,249,207,1)), color-stop(50%, rgba(254,253,237,1)), color-stop(100%, rgba(252,249,207,1))); /* safari4+,chrome */
+    background: -webkit-linear-gradient(180deg, rgba(252,249,207,1) 0%, rgba(254,253,237,1) 50%, rgba(252,249,207,1) 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(180deg, rgba(252,249,207,1) 0%, rgba(254,253,237,1) 50%, rgba(252,249,207,1) 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(180deg, rgba(252,249,207,1) 0%, rgba(254,253,237,1) 50%, rgba(252,249,207,1) 100%); /* ie10+ */
+    background: linear-gradient(270deg, rgba(252,249,207,1) 0%, rgba(254,253,237,1) 50%, rgba(252,249,207,1) 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcf9cf', endColorstr='#fcf9cf',GradientType=1 ); /* ie6-9 */
 }
 
 @media (max-width: 576px) {
@@ -548,12 +559,19 @@ footer {
 }
 
 main {
-    background-image: url(../img/BgDouble-min.jpg);
-    background-repeat-y: repeat;
-    background-size: contain;
-    background-position: top center;
+    /*background-image: url(../img/BgDouble-min.jpg);*/
+    /*background-repeat-y: repeat;*/
+    /*background-size: contain;*/
+    /*background-position: top center;*/
     margin-top: -105px;
     overflow: hidden;
+    background: -moz-radial-gradient(center, ellipse cover, rgba(255,255,255,1) 0%, rgba(251,246,191,1) 100%);
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(255,255,255,1)), color-stop(100%, rgba(251,246,191,1)));
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(255,255,255,1) 0%, rgba(253, 250, 215, 0) 100%);
+    background: -o-radial-gradient(center, ellipse cover, rgba(255,255,255,1) 0%, rgba(251,246,191,1) 100%);
+    background: -ms-radial-gradient(center, ellipse cover, rgba(255,255,255,1) 0%, rgba(251,246,191,1) 100%);
+    background: radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(251,246,191,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#fbf6bf',GradientType=1 );
 }
 
 .brands {
@@ -913,9 +931,17 @@ main {
     padding-left: 50px;
     padding-right: 50px;
     z-index: 10;
-    background-image: url(../img/BgDouble.jpg);
-    background-repeat: no-repeat;
-    background-size: auto;
+    /*background-image: url(../img/BgDouble.jpg);*/
+    /*background-repeat: no-repeat;*/
+    /*background-size: auto;*/
+    background: -moz-linear-gradient(229deg, rgba(253,251,226,1) 0%, rgba(250,247,192,1) 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, rgba(250,247,192,1)), color-stop(100%, rgba(253,251,226,1))); /* safari4+,chrome */
+    background: -webkit-linear-gradient(229deg, rgba(253,251,226,1) 0%, rgba(250,247,192,1) 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(229deg, rgba(253,251,226,1) 0%, rgba(250,247,192,1) 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(229deg, rgba(253,251,226,1) 0%, rgba(250,247,192,1) 100%); /* ie10+ */
+    background: linear-gradient(221deg, rgba(253,251,226,1) 0%, rgba(250,247,192,1) 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fdfbe2', endColorstr='#faf7c0',GradientType=0 ); /* ie6-9 */
+
 }
 
 .contact-left-sidebar > h1 {
