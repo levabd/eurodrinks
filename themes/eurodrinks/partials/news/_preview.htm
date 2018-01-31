@@ -3,11 +3,11 @@
 <div class="col-5 image-block">
     {% if post.image %}
         <a href="/{{ postPage }}/{{ post.slug }}" data-post-id="{{post.id}}">
-            <img class="news-preview-img shadowed" src="{{ post.image|media }}" alt="{{ post.title }}">
+            <img class="news-preview-img shadowed" data-src="{{ post.image|media }}" alt="{{ post.title }}">
         </a>
     {% else %}
         <a href="#" data-post-id="{{post.id}}">
-            <img class="news-preview-img shadowed" src="http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg" alt="{{ post.title }}">
+            <img class="news-preview-img shadowed" data-src="http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg" alt="{{ post.title }}">
         </a>
     {% endif %}
 </div>

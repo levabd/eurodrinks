@@ -19,9 +19,9 @@ function onStart(){
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Allatrack">
     <link rel="icon" type="image/png" href="{{ 'assets/images/png/logo.png'|theme }}">
-    <link href="{{ 'assets/vendor/tether/css/tether.css'|theme }}" rel="stylesheet">
-    <link href="{{ 'assets/vendor/bootstrap4/dist/css/bootstrap.css'|theme }}" rel="stylesheet">
-    <link href="{{ 'assets/vendor/narrow-jumbotron.css'|theme }}" rel="stylesheet">
+    <link href="{{ 'assets/vendor/bootstrap/tether.min.css'|theme }}" rel="stylesheet">
+    <link href="{{ 'assets/vendor/bootstrap/bootstrap.min.css'|theme }}" rel="stylesheet">
+    <link href="{{ 'assets/vendor/bootstrap/narrow-jumbotron.min.css'|theme }}" rel="stylesheet">
     {% styles %}
 </head>
 
@@ -86,9 +86,10 @@ function onStart(){
     <!-- Placed at the end of the document so the pages load faster -->
     <!-- Scripts -->
     <script src="{{ [
-                'assets/vendor/jquery.js',
-                'assets/vendor/tether/js/tether.js',
-                'assets/vendor/bootstrap4/dist/js/bootstrap.bundle.min.js'
+                'assets/vendor/bootstrap/jquery.js',
+                'assets/vendor/bootstrap/popper.min.js',
+                'assets/vendor/bootstrap/tether.min.js',
+                'assets/vendor/bootstrap/bootstrap.min.js'
                 ]|theme  }}"></script>
 
     {% framework extras %}

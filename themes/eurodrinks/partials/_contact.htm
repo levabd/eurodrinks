@@ -55,7 +55,7 @@
 <div class="container contacts">
     <div class="row">
         <div class="col contacts-col">
-            <aside class="contact-left-sidebar">
+            <aside class="contact-left-sidebar" id="contact-left-sidebar">
                 <h1 id="contacts-title">{{'Contacts'|_}}</h1>
                 <div class="row contact-item">
                     <div class="icon-phone-rounded contact-item-icon f-left"></div>
@@ -107,47 +107,3 @@
 </div>
 
 <div id="map"></div>
-
-{% put scripts %}
-<script type="text/javascript">
-  $('#contact-us-form').submit(function (e) {
-    e.preventDefault();
-
-    // validation input
-    var $name = $('#name');
-    if (!$name.val()){
-
-      $('#validation-body').text(trans('name_required'));
-      $('#modal-feedback-validation').modal('show');
-      return
-    }
-    var $email = $('#email');
-    if (!$email.val()){
-      $('#validation-body').text(trans('email_required'));
-      $('#modal-feedback-validation').modal('show');
-      return
-    }
-    var $message = $('#message');
-    if (!$message.val()){
-      $('#validation-body').text(trans('message_required'));
-      $('#modal-feedback-validation').modal('show');
-      return
-    }
-
-    $.request('onSendFeedback', {
-      data: {
-        name: $name.val(),
-        email: $email.val(),
-        message: $message.val(),
-      },
-      complete: function (data) {
-        $('#modal-feedback-send').modal('show');
-        $name.val('');
-        $email.val('');
-        $message.val('');
-      }
-    });
-
-  });
-</script>
-{% endput %}

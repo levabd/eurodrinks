@@ -123,7 +123,7 @@ var CarouselRenderer = function CarouselRenderer(defaultImage){
     },
     renderBrand: function renderBrand(brand) {
 
-      var template = '<div class="row preview-products-row" style="display:none;height: 0px;" id="preview-products-row-' + brand.id + '">\
+      var template = '<div class="row preview-products-row" style="display:none;height: 0px;will-change:height;" id="preview-products-row-' + brand.id + '">\
       <div class="col-12">\
          <div class="brand-image-wrapper text-center">\
              <img id="brand-logo-'+brand.id+'" class="brand-logo" data-src="' + brand.image.path + '" alt="' + brand.import_name + '">\

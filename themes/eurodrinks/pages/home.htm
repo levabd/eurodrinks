@@ -80,6 +80,8 @@ public function onSendFeedback()
 
 ?>
 ==
+
+{% htmlcompress %}
 <!-- Modal info -->
 <div class="modal fade-scale modal-centered" id="modal-center" tabindex="-1" role="dialog"
      aria-labelledby="modal-center"
@@ -189,16 +191,16 @@ public function onSendFeedback()
             </div>
         </div>
 
-        <div class="row products ">
+        <div class="row products " id="product-row">
 
             {% for key, brand in brands %}
 
-            <div class="p-3 mt-2 circle {{ brand.style_class }} d-flex justify-content-center align-items-center"
+            <div class="circle {{ brand.style_class }} d-flex justify-content-center align-items-center"
                  data-brand-number="{{ key+1 }}"
                  data-brand-id="{{ brand.id }}">
 
                 {% if brand.image %}
-                <img src="{{ brand.image.path }}" alt="{{ brand.import_name }}">
+                <img data-src="{{ brand.image.path }}" alt="{{ brand.import_name }}">
                 {% else %}
                 <p>No image</p>
                 {% endif %}
@@ -227,9 +229,9 @@ public function onSendFeedback()
                 <div class="beer p-2 text-center">minerální vody</div>
             </div>
         </div>
-        <div class="row d-flex justify-content-center align-items-center">
+        <div class="row d-flex justify-content-center align-items-center" id="partners-water-image">
             <div class="p-2 circle light-green2 d-flex justify-content-center align-items-center">
-                <img class="big" src="{{'assets/img/logo/24.png'|theme}}" alt="M">
+                <img class="big" data-src="{{'assets/img/logo/24.png'|theme}}" alt="M">
             </div>
         </div>
         <div class="row juice text-lowercase">
@@ -245,9 +247,9 @@ public function onSendFeedback()
                 <div class="beer p-2 text-center">šťáva</div>
             </div>
         </div>
-        <div class="row d-flex justify-content-center align-items-center">
+        <div class="row d-flex justify-content-center align-items-center" id="partners-juice-image">
             <div class="p-2 circle light-red d-flex justify-content-center align-items-center">
-                <img class="big" src="{{'assets/img/logo/25.png'|theme}}" alt="M">
+                <img class="big" data-src="{{'assets/img/logo/25.png'|theme}}" alt="M">
             </div>
         </div>
     </div>
@@ -297,18 +299,20 @@ public function onSendFeedback()
 
     {% partial "_contact" %}
 </main>
+{% endhtmlcompress %}
 <script src="{{ [
-            'assets/vendor/bootstrap4/assets/js/vendor/jquery.min.js',
-            'assets/vendor/bootstrap4/assets/js/vendor/popper.min.js',
-            'assets/vendor/bootstrap4/dist/js/bootstrap.js',
-            'assets/vendor/hummer.js',
-            'assets/vendor/classListPolyfill.js',
+            'assets/vendor/bootstrap/jquery.min.js',
+            'assets/vendor/bootstrap/popper.min.js',
+            'assets/vendor/bootstrap/bootstrap.min.js',
+            'assets/vendor/hummer.min.js',
+            'assets/vendor/polyfill/intersectionObserver.js',
+            'assets/vendor/polyfill/forEach.js',
+            'assets/vendor/polyfill/classList.js',
             'assets/js/pages/posts/index.js',
             'assets/js/pages/home.js'
             ]|theme  }}">
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{google_map_api_key}}&callback=initContactMap" async
-        defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{google_map_api_key}}" async defer></script>
 <script>
 
   try {
@@ -351,8 +355,18 @@ public function onSendFeedback()
     map.style.opacity=0;
   }
 
-    if (!isMobile()){
+  if (!isMobile()){
       $('#header-map').attr('src', $('#header-map').data('src'));
+  }
+
+  function loadImages(collection){
+    // load images (on first does not loaded)
+    [].forEach.call(collection, function (img) {
+      img.setAttribute('src', img.getAttribute('data-src'))
+      img.onload = function () {
+        img.removeAttribute('data-src')
+      }
+    })
   }
 
   var RangeGenerator = function RangeGenerator(){
@@ -492,7 +506,6 @@ public function onSendFeedback()
       Object.keys(ranges[rangeBy]).forEach(function (e) {
         var range = ranges[rangeBy][e];
         if (currentBrandNumber >= range[0] && currentBrandNumber <= range[1]) {
-          console.log('Row range: ', currentBrandNumber, range);
           result['currentBrandNumber'] = currentBrandNumber;
           result['range'] = range;
         }
@@ -504,7 +517,8 @@ public function onSendFeedback()
       ranges:  ranges,
       getNeededRange: getNeededRange,
     }
-  };
+  }
+
   function initContactMap() {
     map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: -34.397, lng: 150.644},
@@ -631,7 +645,9 @@ public function onSendFeedback()
       animation: google.maps.Animation.DROP,
       position: officeLatLng
     });
+  }
 
+  $(document).ready(function () {
     productsMap = new google.maps.Map(document.getElementById('map-canvas'), {
       center: kievLatLng,
       zoom: 12,
@@ -642,12 +658,8 @@ public function onSendFeedback()
       var center = new google.maps.LatLng(kievLatLng.lat, kievLatLng.lng);
       productsMap.setCenter(center);
     });
-  }
-
-  $(document).ready(function () {
-    console.log("ready!");
-
     $('.products .circle').click(function (e) {
+
       var target = null;
       if (e.target.tagName === "IMG") {
         target = e.target.parentNode;
@@ -684,33 +696,32 @@ public function onSendFeedback()
       }
     });
 
-
     // Set the navigation
     var ANIMATION_SPEED = 2000;
-
+    var OFFSET = 100;
     $('#link-main, #footer-home-link').click(function (e) {
       e.preventDefault();
-      $('html, body').animate({scrollTop: $('#link-main').offset().top}, ANIMATION_SPEED);
+      $('html, body').animate({scrollTop: $('.jumbotron').offset().top-OFFSET}, ANIMATION_SPEED);
     });
-    $('#link-products, #footer-products-link').click(function (e) {
+    $('#link-products, #footer-products-link, #link-shop').click(function (e) {
       e.preventDefault();
-      $('html, body').animate({scrollTop: $('#products-title').offset().top}, ANIMATION_SPEED);
+      $('html, body').animate({scrollTop: $('#products-title').offset().top-OFFSET}, ANIMATION_SPEED);
     });
     $('#link-about, #footer-about-link').click(function (e) {
       e.preventDefault();
-      $('html, body').animate({scrollTop: $('#about-title').offset().top}, ANIMATION_SPEED);
+      $('html, body').animate({scrollTop: $('#about-title').offset().top-OFFSET}, ANIMATION_SPEED);
     });
     $('#link-news, #footer-news-link').click(function (e) {
       e.preventDefault();
-      $('html, body').animate({scrollTop: $('#news-title').offset().top}, ANIMATION_SPEED);
+      $('html, body').animate({scrollTop: $('#news-title').offset().top-OFFSET}, ANIMATION_SPEED);
     });
     $('#link-contacts, #footer-contacts-link').click(function (e) {
       e.preventDefault();
-      $('html, body').animate({scrollTop: $('#contacts-title').offset().top}, ANIMATION_SPEED);
+      $('html, body').animate({scrollTop: $('#contacts-title').offset().top-OFFSET}, ANIMATION_SPEED);
     });
     $('#footer-partners-link').click(function (e) {
       e.preventDefault();
-      $('html, body').animate({scrollTop: $('#partners-block').offset().top}, ANIMATION_SPEED);
+      $('html, body').animate({scrollTop: $('#partners-block').offset().top-OFFSET}, ANIMATION_SPEED);
     });
 
     var is_open = false;
@@ -831,19 +842,8 @@ public function onSendFeedback()
         currentCarouselFour.querySelector('a.carousel-control-prev').style.display = 'none';
       }
 
-
-      function loadImages(){
-        // load images (on first does not loaded)
-        [].forEach.call(carousel.querySelectorAll('img[data-src]'), function (img) {
-          img.setAttribute('src', img.getAttribute('data-src'));
-          img.onload = function () {
-            img.removeAttribute('data-src');
-          };
-        });
-      }
-
       // paste empty block - for setting heigth for carousel
-      $('<div class="row preview-products-row-empty" style="height: 0;" id="empty-block"></div>').insertAfter($carousel);
+      $('<div class="row preview-products-row-empty" style="height: 0;will-change: height;" id="empty-block"></div>').insertAfter($carousel);
 
       // find set insertedCarousel margin
       startOfTheProductsRowRect = $('.row.products').get(0).getBoundingClientRect();
@@ -851,13 +851,14 @@ public function onSendFeedback()
       $insertedCarousel = $('#' + id_active);
       $insertedCarousel.show();
       $insertedCarousel.css('margin-top', (insertAfterRect.bottom - startOfTheProductsRowRect.top - 5) + 'px');
+      $insertedCarousel.css('margin-top', (insertAfterRect.bottom - startOfTheProductsRowRect.top - 5) + 'px');
 
       $('#empty-block').animate({height: "850px"}, 400, function () {
         $insertedCarousel.animate({height: "850px"}, 400, function () {
           is_open = true;
           brand_number = rangeObject.currentBrandNumber;
 
-          loadImages()
+          loadImages(carousel.querySelectorAll('img[data-src]'))
 
           $('html, body').animate({
             scrollTop: $(carousel).offset().top - 120
@@ -974,13 +975,80 @@ public function onSendFeedback()
       }
 
       if (is_open) {
-        closeCarousel($('#' + id_active));
+        closeCarousel($('#' + id_active))
         return
       }
 
-      openCarousel(rangeObject, target, one);
+      openCarousel(rangeObject, target, one)
     }
-  });
 
+    // Loading resources
+    var io = new IntersectionObserver(
+      function(entries ) {
+
+        [].forEach.call(entries, function (element) {
+          if ((element.target.id === 'about-title' || element.target.id === 'contact-left-sidebar') && element.isIntersecting) {
+            initContactMap()
+            io.unobserve(element.target);
+          }
+
+          if ([ 'post-list', 'product-row' , 'partners-water-image' , 'partners-juice-image'].indexOf(element.target.id ) !=-1 && element.isIntersecting) {
+            loadImages(element.target.querySelectorAll('img[data-src]'))
+            io.unobserve(element.target);
+          }
+        })
+
+      },{
+        threshold: 0.1
+      }
+    )
+
+    io.observe(document.getElementById('product-row'))
+    io.observe(document.getElementById('partners-juice-image'))
+    io.observe(document.getElementById('partners-water-image'))
+    io.observe(document.getElementById('about-title'))
+    io.observe(document.getElementById('contact-left-sidebar'))
+    io.observe(document.getElementById('post-list'))
+
+    $('#contact-us-form').submit(function (e) {
+      e.preventDefault();
+
+      // validation input
+      var $name = $('#name');
+      if (!$name.val()){
+
+        $('#validation-body').text(trans('name_required'));
+        $('#modal-feedback-validation').modal('show');
+        return
+      }
+      var $email = $('#email');
+      if (!$email.val()){
+        $('#validation-body').text(trans('email_required'));
+        $('#modal-feedback-validation').modal('show');
+        return
+      }
+      var $message = $('#message');
+      if (!$message.val()){
+        $('#validation-body').text(trans('message_required'));
+        $('#modal-feedback-validation').modal('show');
+        return
+      }
+
+      $.request('onSendFeedback', {
+        data: {
+          name: $name.val(),
+          email: $email.val(),
+          message: $message.val(),
+        },
+        complete: function (data) {
+          $('#modal-feedback-send').modal('show');
+          $name.val('');
+          $email.val('');
+          $message.val('');
+        }
+      });
+
+    });
+  })
 
 </script>

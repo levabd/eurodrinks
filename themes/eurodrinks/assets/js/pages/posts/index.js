@@ -34,7 +34,7 @@ function getPosts(next_page) {
 
       var postAlreadyOnPage = false;
       var postId = false;
-      console.log(data.responseJSON.posts);
+
       data.responseJSON.posts.data.forEach(function (post) {
         if (newsPostIds.indexOf(post.id) != -1) {
           postAlreadyOnPage = true;
@@ -50,7 +50,16 @@ function getPosts(next_page) {
       if (data.responseJSON.content && data.responseJSON.content !== "") {
         $postList.append(data.responseJSON.content);
         newsPagePaginationData.current_page = next_page;
-        setNewsLinkListeners()
+        setNewsLinkListeners();
+        [].forEach.call($postList[0].querySelectorAll('img'), function (img) {
+          if (img.getAttribute('data-src')===null){
+            return
+          }
+          img.setAttribute('src', img.getAttribute('data-src'))
+          img.onload = function () {
+            img.removeAttribute('data-src')
+          }
+        })
       }
     }
   })
